@@ -1,22 +1,53 @@
 import userService from '../service/userService'
 
 module.exports = {
-    index(req, res, next) {
-        res.render("home");
+    async index(req, res) {
+        let userList = await userService.getUserList()
+        res.render("home", { userList });
     },
 
-    user(req, res, next) {
-        res.render("user");
-    },
-
-    handleCreateNewUser(req, res, next) {
+    handleCreateNewUser(req, res) {
         const name = req.body.name;
         const email = req.body.email;
         const password = req.body.password;
 
-        let userList = userService.getUserList();
+        userService.createNewUser(name, email, password);
 
-        res.json("userService.getUserList()");
-        console.log("userList: ", userList);
+        res.redirect("/");
+    },
+
+    handleDeleteUser(req, res) {
+        const id = req.params.id;
+
+        userService.deleteUser(id);
+
+        res.redirect("/");
+    },
+
+    async getUserToUpdate(req, res) {
+        const id = req.params.id;
+
+        let users = await userService.getUserById(id);
+
+        res.render("updateUser", { user: users[0] });
+    },
+
+    async showUserList(req, res) {
+        let userList = await userService.getUserList();
+        res.render("user", { userList });
+    },
+
+    async handleUpdateUser(req, res) {
+        let name = req.body.name;
+        let email = req.body.email;
+        let id = req.body.id;
+
+        try {
+            await userService.updateUser(name, email, id);
+        } catch (error) {
+            console.log(error);
+        }
+
+        res.redirect("/");
     },
 };
