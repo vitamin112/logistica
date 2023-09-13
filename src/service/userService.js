@@ -1,121 +1,71 @@
-// get the client
-import mysql from "mysql2/promise";
-//import bcrypt
 import bcrypt from "bcryptjs";
-// get the promise implementation, we will use bluebird
-const bluebird = require('bluebird');
+import db from "../models";
 
 const hashPassword = (userPassword) => {
-    var salt = bcrypt.genSaltSync(10);
-    var hashPassword = bcrypt.hashSync(userPassword, salt);
-    return hashPassword;
+  var salt = bcrypt.genSaltSync(10);
+  var hashPassword = bcrypt.hashSync(userPassword, salt);
+  return hashPassword;
 };
 
 const createNewUser = async (name, email, password) => {
-
-    let hashPass = hashPassword(password);
-
-    const connection = await mysql.createConnection(
-        {
-            host: 'localhost',
-            user: 'root',
-            password: "12345678",
-            database: 'nodejs',
-            Promise: bluebird
-        }
-    );
-    try {
-        // query database
-        const [rows, fields] = await connection.execute("INSERT INTO users (name, email,password) VALUES (?,?,?)",
-            [name, email, hashPass]);
-    }
-    catch (e) {
-        console.log("Error: ", e);
-    }
+  let hashPass = hashPassword(password);
+  try {
+    await db.User.create({ userName: name, email, password: hashPass });
+  } catch (e) {
+    console.log("Error: ", e);
+  }
 };
 
 const deleteUser = async (id) => {
-
-    const connection = await mysql.createConnection(
-        {
-            host: 'localhost',
-            user: 'root',
-            password: "12345678",
-            database: 'nodejs',
-            Promise: bluebird
-        }
-    );
-    try {
-        // query database
-        const [rows, fields] = await connection.execute("DELETE FROM users WHERE id=?",
-            [id]);
-    }
-    catch (e) {
-        console.log("Error: ", e);
-    }
+  try {
+    await db.User.destroy({
+      where: {
+        id,
+      },
+    });
+  } catch (e) {
+    console.log("Error: ", e);
+  }
 };
 
 const getUserList = async () => {
-    // create the connection, specify bluebird as Promise
-    const connection = await mysql.createConnection(
-        {
-            host: 'localhost',
-            user: 'root',
-            password: "12345678",
-            database: 'nodejs',
-            Promise: bluebird
-        }
-    );
+  let test = await db.User.findOne({
+    where: { id: 1 },
+    include: { model: db.Group },
+    raw: true,
+    nest: true,
+  });
 
-    let users = [];
+  console.log(">>> test found user relationships: ", test);
 
-    // query database
-    const [rows, fields] = await connection.execute('SELECT * FROM users');
-    return rows;
+  let users = [];
+  users = await db.User.findAll();
+  return users;
 };
 
 const getUserById = async (id) => {
-    // create the connection, specify bluebird as Promise
-    const connection = await mysql.createConnection(
-        {
-            host: 'localhost',
-            user: 'root',
-            password: "12345678",
-            database: 'nodejs',
-            Promise: bluebird
-        }
-    );
-
-    // query database
-    const [user, fields] = await connection.execute('SELECT * FROM users where id=?', [id]);
-    return user;
+  return await db.User.findOne({ where: { id } });
 };
 
 const updateUser = async (name, email, id) => {
-    // create the connection, specify bluebird as Promise
-    const connection = await mysql.createConnection(
-        {
-            host: 'localhost',
-            user: 'root',
-            password: "12345678",
-            database: 'nodejs',
-            Promise: bluebird
-        }
+  try {
+    await db.User.update(
+      { userName: name, email },
+      {
+        where: {
+          id,
+        },
+      }
     );
-    try {
-        // query database
-        const [rows, fields] = await connection.execute('UPDATE users SET name = ?, email = ? WHERE id =? ', [name, email, id]);
-
-    } catch (e) {
-        console.log(e);
-    }
-
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 module.exports = {
-    createNewUser,
-    getUserList,
-    deleteUser,
-    getUserById,
-    updateUser,
-}
+  createNewUser,
+  getUserList,
+  deleteUser,
+  getUserById,
+  updateUser,
+};

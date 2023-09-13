@@ -1,7 +1,8 @@
-import express from 'express';
-import configViewEngine from "./configs/viewEngine";
+import express from "express";
+import configViewEngine from "./config/viewEngine";
 import initWebRouter from "./routes/web";
 import bodyParser from "body-parser";
+import connection from "./config/connectBD";
 require("dotenv").config();
 
 const app = express();
@@ -14,9 +15,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //config view engine
 configViewEngine(app);
 
+//connection
+connection();
+
 //init web routes
 initWebRouter(app);
 
 app.listen(PORT, () => {
-    console.log("App is running on the port " + PORT);
-})
+  console.log("App is running on the port " + PORT);
+});
