@@ -29,14 +29,14 @@ const deleteUser = async (id) => {
 };
 
 const getUserList = async () => {
-  let test = await db.User.findOne({
-    where: { id: 1 },
-    include: { model: db.Group },
-    raw: true,
-    nest: true,
-  });
+  // let test = await db.User.findOne({
+  //   where: { id: 1 },
+  //   include: { model: db.Group },
+  //   raw: true,
+  //   nest: true,
+  // });
 
-  console.log(">>> test found user relationships: ", test);
+  // console.log(">>> test found user relationships: ", test);
 
   let users = [];
   users = await db.User.findAll();
