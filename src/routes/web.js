@@ -1,6 +1,6 @@
 import express from "express";
 import homeController from "../controller/homeController";
-import apiController from "../controller/apiController";
+import apiLoginController from "../controller/apiLoginController";
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ const initWebRouter = (app) => {
   router.get("/", homeController.index);
 
   // test API
-  router.get("/api/test-api", apiController.testApi);
+  router.get("/api/test-api", apiLoginController.testApi);
 
   return app.use("/", router);
 };

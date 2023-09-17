@@ -33,13 +33,14 @@ module.exports = {
 
       //hash password
       let hashPass = hashPassword(rawData.password);
+      console.log(">>check hash password: ", hashPass);
 
       await db.User.create({
-        userName: rawData.userName,
-        email: rawData.email,
-        phone: rawData.phone,
-        sex: rawData.sex,
-        address: rawData.address,
+        userName: rawData.userName.trim(),
+        email: rawData.email.trim(),
+        phone: rawData.phone.trim(),
+        sex: rawData.sex.trim(),
+        address: rawData.address.trim(),
         password: hashPass,
         groupId: 1,
       });
@@ -63,34 +64,33 @@ module.exports = {
           code: -1,
           data: {},
         };
+
+      let userKey = userData.key.trim();
+      let userPassword = userData.password.trim();
+
       let user = await db.User.findOne({
         where: {
-          [Op.or]: [{ email: userData.key }, { phone: userData.key }],
+          [Op.or]: [{ email: userKey }, { phone: userPassword }],
         },
         raw: true,
       });
-      console.log(user);
-      if (user !== null) {
-        if (user.password === userData.password)
-          return {
-            message: "login ok",
-            code: 1,
-            data: {},
-          };
-        else {
-          return {
-            message: "Password is incorrect",
-            code: -1,
-            data: {},
-          };
-        }
-      } else {
+
+      // check Password
+      let isCheckedPassword = await bcrypt.compare(userPassword, user.password);
+
+      if (isCheckedPassword) {
         return {
-          message: "login failed",
-          code: -1,
+          message: "login ok",
+          code: 1,
           data: {},
         };
       }
+
+      return {
+        message: "login failed ",
+        code: -1,
+        data: {},
+      };
     } catch (error) {
       console.log(">>check error", error);
     }

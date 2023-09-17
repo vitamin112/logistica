@@ -1,77 +1,67 @@
-const useApiService = require("../service/useApiService");
-
-const testApi = (req, res) => {
-  return res.status(200).json({
-    Message: "some message",
-  });
-};
-
-const register = async (req, res) => {
-  //validate
-  try {
-    if (
-      req.body.userName === "" ||
-      req.body.email === "" ||
-      req.body.phone === "" ||
-      req.body.sex === "" ||
-      req.body.address === "" ||
-      req.body.password === ""
-    ) {
-      return res.status(200).json({
-        message: "You need to enter every field!",
-        code: -1,
-        data: {},
-      });
-    }
-
-    //call service to register
-    let result = await useApiService.handleRegister(req.body);
-
-    //return message
-    return res.status(200).json({
-      message: result.Message,
-      code: result.Code,
-      data: {},
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Something went wrong",
-      code: -2,
-      data: {},
-    });
-  }
-};
-
-const login = async (req, res) => {
-  //validate
-  try {
-    if (req.body.key === "" || req.body.password === "") {
-      return res.status(200).json({
-        message: "You need to enter every field!",
-        code: -1,
-        data: {},
-      });
-    }
-
-    //call service to register
-    let result = await useApiService.handleLogin(req.body);
-
-    //return message
-    return res.status(200).json({
-      message: result.message,
-      code: result.code,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Something went wrong",
-      code: -2,
-      data: {},
-    });
-  }
-};
-
+import userApiService from "../service/userApiService";
 module.exports = {
-  testApi,
-  register,
-  login,
+  async readAllUser(req, res) {
+    try {
+      if (req.query.page && req.query.limit) {
+        let page = req.query.page;
+        let limit = req.query.limit;
+
+        let result = await userApiService.readUsersPagination(+page, +limit);
+
+        return res.status(200).json({
+          Message: result.Message,
+          Code: result.Code,
+          Data: result.Data,
+        });
+      } else {
+        let result = await userApiService.readAllUser();
+        return res.status(200).json(result);
+      }
+    } catch (e) {
+      return {
+        Message: "Something went wrong!",
+        Code: -1,
+        Data: [],
+      };
+    }
+  },
+
+  async crateNewUser(req, res) {
+    try {
+      let result = await userApiService.crateNewUser(req.body);
+      return res.status(200).json(result);
+    } catch (e) {
+      return {
+        Message: "Something went wrong!",
+        Code: -1,
+        Data: [],
+      };
+    }
+  },
+
+  async updateUser(req, res) {
+    try {
+      let result = await userApiService.updateUser(req.body);
+      return res.status(200).json(result);
+    } catch (e) {
+      return {
+        Message: "Something went wrong!",
+        Code: -1,
+        Data: [],
+      };
+    }
+  },
+
+  async deleteUser(req, res) {
+    try {
+      let result = await userApiService.deleteUser(req.body.id);
+      return res.status(200).json(result);
+    } catch (e) {
+      return {
+        Message: "Something went wrong!",
+        Code: -1,
+        Data: [],
+      };
+    }
+  },
 };
