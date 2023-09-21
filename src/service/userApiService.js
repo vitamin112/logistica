@@ -18,8 +18,6 @@ module.exports = {
 
       let totalPages = Math.ceil(count / limit);
 
-      console.log(rows);
-
       if (rows) {
         return {
           Message: "Successfully",

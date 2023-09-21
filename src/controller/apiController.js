@@ -5,9 +5,7 @@ module.exports = {
       if (req.query.page && req.query.limit) {
         let page = req.query.page;
         let limit = req.query.limit;
-
         let result = await userApiService.readUsersPagination(+page, +limit);
-
         return res.status(200).json({
           Message: result.Message,
           Code: result.Code,

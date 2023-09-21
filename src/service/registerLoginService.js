@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import db from "../models";
+import jwt from "jsonwebtoken";
 const { Op } = require("sequelize");
 
 const hashPassword = (userPassword) => {
@@ -33,7 +34,6 @@ module.exports = {
 
       //hash password
       let hashPass = hashPassword(rawData.password);
-      console.log(">>check hash password: ", hashPass);
 
       await db.User.create({
         userName: rawData.userName.trim(),
@@ -58,34 +58,70 @@ module.exports = {
   },
   async handleLogin(userData) {
     try {
-      if (userData.key === "" || userData.password === "")
+      if (!userData.key || !userData.password)
         return {
           message: "you must fill all the fields",
           code: -1,
           data: {},
         };
 
-      let userKey = userData.key.trim();
-      let userPassword = userData.password.trim();
+      let userKey = String(userData.key).trim();
+      let userPassword = String(userData.password).trim();
 
       let user = await db.User.findOne({
         where: {
-          [Op.or]: [{ email: userKey }, { phone: userPassword }],
+          [Op.or]: [{ email: userKey }, { phone: userKey }],
         },
-        raw: true,
+        attributes: ["userName", "password"],
+        include: [
+          {
+            model: db.Group,
+            attributes: ["name"],
+            include: [
+              {
+                model: db.Role,
+                attributes: ["url"],
+                through: {
+                  attributes: [],
+                },
+              },
+            ],
+          },
+        ],
       });
+      if (user) {
+        let isCheckedPassword = await bcrypt.compare(
+          userPassword,
+          user.password
+        );
 
-      // check Password
-      let isCheckedPassword = await bcrypt.compare(userPassword, user.password);
+        const urls = user.Group.Roles
+          ? user.Group.Roles.map((role) => role.url)
+          : [];
 
-      if (isCheckedPassword) {
-        return {
-          message: "login ok",
-          code: 1,
-          data: {},
-        };
+        if (isCheckedPassword) {
+          //create a token
+          let payload = {
+            userName: user.userName,
+            Group: user.Group.name,
+            Roles: urls,
+          };
+          let secretKey = process.env.SECRET_KEY;
+
+          let jwtToken = jwt.sign(payload, secretKey, {
+            expiresIn: 30 * 30 * 1000,
+          });
+
+          return {
+            message: "login successful",
+            code: 1,
+            data: {
+              payload,
+              jwtToken,
+            },
+          };
+        }
       }
-
       return {
         message: "login failed ",
         code: -1,

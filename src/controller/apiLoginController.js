@@ -1,12 +1,7 @@
 const registerLoginService = require("../service/registerLoginService");
 
-const testApi = (req, res) => {
-  return res.status(200).json({
-    Message: "some message",
-  });
-};
-
 const register = async (req, res) => {
+  console.log("token register: ", req.cookies);
   //validate
   try {
     if (
@@ -47,7 +42,7 @@ const login = async (req, res) => {
   try {
     if (req.body.key === "" || req.body.password === "") {
       return res.status(200).json({
-        message: "You need to enter every field!",
+        message: "You need to enter every field! ",
         code: -1,
         data: {},
       });
@@ -60,6 +55,7 @@ const login = async (req, res) => {
     return res.status(200).json({
       message: result.message,
       code: result.code,
+      data: result.data,
     });
   } catch (error) {
     return res.status(500).json({
@@ -71,7 +67,6 @@ const login = async (req, res) => {
 };
 
 module.exports = {
-  testApi,
   register,
   login,
 };

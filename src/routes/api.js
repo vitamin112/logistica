@@ -1,14 +1,14 @@
 import express from "express";
 import apiLoginController from "../controller/apiLoginController";
 import apiController from "../controller/apiController";
+import { withToken } from "../midleWare/authMidleWare";
 
 const router = express.Router();
 
 const initApiRouter = (app) => {
   // api for register login routes
   router.post("/register", apiLoginController.register);
-  router.post("/login", apiLoginController.login);
-  router.get("/test-api", apiLoginController.testApi);
+  router.post("/login", withToken, apiLoginController.login);
 
   //api for user service
   router.get("/user/read", apiController.readAllUser);

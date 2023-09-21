@@ -36,8 +36,6 @@ const getUserList = async () => {
   //   nest: true,
   // });
 
-  // console.log(">>> test found user relationships: ", test);
-
   let users = [];
   users = await db.User.findAll();
   return users;

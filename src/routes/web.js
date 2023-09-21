@@ -12,9 +12,6 @@ const initWebRouter = (app) => {
   router.post("/user/update-user", homeController.handleUpdateUser);
   router.get("/", homeController.index);
 
-  // test API
-  router.get("/api/test-api", apiLoginController.testApi);
-
   return app.use("/", router);
 };
 module.exports = initWebRouter;
