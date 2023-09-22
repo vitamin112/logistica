@@ -76,7 +76,39 @@ module.exports = {
     const token = req.cookies.access_token;
     if (token) {
       let decoded = verify(token, process.env.SECRET_KEY);
-      res.json(decoded);
+      //get role from token
+      console.log(decoded.Roles);
+
+      //get role from db
+      let userData = await db.Group.findOne({
+        where: { name: decoded.Group },
+        attributes: [["name", "Group"]],
+        include: [
+          {
+            model: db.Role,
+            attributes: ["url"],
+            through: {
+              attributes: [],
+            },
+          },
+        ],
+      });
+
+      // let userRoles = userData.Roles.map((role) => role.url);
+      //compare roles
+
+      if (userData && userData.dataValues.Group === decoded.Group) {
+        next();
+        // userRoles = userData.Roles.map((role) => role.url);
+      } else {
+        res.json("Unknown user");
+      }
+
+      //valid
+      // res.json(userData);
+
+      //invalid
+      // res.json("401 Unauthorized Error");
     } else {
       res.json("Unknown user");
     }
