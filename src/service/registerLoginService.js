@@ -11,10 +11,26 @@ const hashPassword = (userPassword) => {
 
 module.exports = {
   async handleRegister(rawData) {
+    if (
+      rawData.email === undefined ||
+      rawData.password === undefined ||
+      rawData.email === "" ||
+      rawData.password === ""
+    )
+      return {
+        Message: "you must fill all the fields",
+        Code: -1,
+        Data: {},
+      };
+
+    let userKey = String(rawData.key).trim();
+    let userPassword = String(rawData.password).trim();
+
     try {
       const checkEmail = await db.User.findOne({
         where: { email: rawData.email },
       });
+
       if (checkEmail !== null) {
         return {
           Message: "Your email address is exists",
@@ -50,8 +66,9 @@ module.exports = {
         Code: 1,
       };
     } catch (error) {
+      console.log("Error: ", error);
       return {
-        Message: error,
+        Message: "Registered failed",
         Code: 500,
       };
     }

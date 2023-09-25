@@ -1,0 +1,18 @@
+get http://localhost:8080/user
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InTDoGkga2hv4bqjbiBt4bubaSIsIkdyb3VwIjoiZGV2IiwiUm9sZXMiOlsiL3VzZXIiLCIvdXNlci9jcmVhdGUtdXNlciJdLCJpYXQiOjE2OTU0ODU0NzEsImV4cCI6MTY5NjM4NTQ3MX0.CNuO9YxPEiqGuyeqmNvITeHE3hW239PLxrcm_ZXsf1I
+
+{
+    "key": "new@gmail.com",
+    "password": "123"
+}
+
+###
+post http://localhost:8080/api/v1/register
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InTDoGkga2hv4bqjbiBt4bubaSIsIkdyb3VwIjoiZGV2IiwiUm9sZXMiOlsiL3VzZXIiLCIvdXNlci9jcmVhdGUtdXNlciJdLCJpYXQiOjE2OTU0ODU0NzEsImV4cCI6MTY5NjM4NTQ3MX0.CNuO9YxPEiqGuyeqmNvITeHE3hW239PLxrcm_ZXsf1I
+
+{
+    "email": "new@gmail.com",
+    "password": "123"
+}

@@ -16,6 +16,6 @@ const initApiRouter = (app) => {
   router.put("/user/update", apiController.updateUser);
   router.delete("/user/delete", apiController.deleteUser);
 
-  return app.use("/api/", router);
+  return app.use("/api/v1", router);
 };
 module.exports = initApiRouter;

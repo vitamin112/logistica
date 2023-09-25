@@ -1,7 +1,6 @@
 const registerLoginService = require("../service/registerLoginService");
 
 const register = async (req, res) => {
-  console.log("token register: ", req.cookies);
   //validate
   try {
     if (
@@ -30,7 +29,7 @@ const register = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: "Something went wrong",
+      message: "Something went wrong 111",
       code: -2,
       data: {},
     });

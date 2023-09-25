@@ -37,6 +37,14 @@ module.exports = {
   },
 
   async handleUpdateUser(req, res) {
+    let url = req.url;
+    let userRoles = req.user.Roles;
+
+    console.log(userRoles, req.url);
+    console.log(userRoles.includes(url));
+
+    if (req.user.Roles.includes(url)) console.log("you don't have permission!");
+
     let name = req.body.name;
     let email = req.body.email;
     let id = req.body.id;

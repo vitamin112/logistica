@@ -34,9 +34,10 @@ app.use(cookieParser());
 //connection
 connection();
 
+app.use("/", isAuth);
+
 //init web routes
 initApiRouter(app);
-app.use("*", isAuth);
 initWebRouter(app);
 
 app.listen(PORT, () => {

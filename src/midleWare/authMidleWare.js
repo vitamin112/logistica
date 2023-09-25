@@ -73,44 +73,50 @@ module.exports = {
   },
 
   async isAuth(req, res, next) {
-    const token = req.cookies.access_token;
-    if (token) {
-      let decoded = verify(token, process.env.SECRET_KEY);
-      //get role from token
-      console.log(decoded.Roles);
+    const ignoreRole = ["/api/v1/login", "/api/v1/register"];
+    const path = req.path;
 
-      //get role from db
-      let userData = await db.Group.findOne({
-        where: { name: decoded.Group },
-        attributes: [["name", "Group"]],
-        include: [
-          {
-            model: db.Role,
-            attributes: ["url"],
-            through: {
-              attributes: [],
-            },
-          },
-        ],
-      });
+    if (ignoreRole.includes(path)) next();
+    else {
+      const token = req.header("Authorization")?.replace("Bearer ", "");
+      if (token) {
+        try {
+          let decoded = verify(token, process.env.SECRET_KEY);
+          //get role from db
+          let userData = await db.Group.findOne({
+            where: { name: decoded.Group },
+            attributes: [["name", "Group"]],
+            include: [
+              {
+                model: db.Role,
+                attributes: ["url"],
+                through: {
+                  attributes: [],
+                },
+              },
+            ],
+          });
 
-      // let userRoles = userData.Roles.map((role) => role.url);
-      //compare roles
+          let userRoles = userData.Roles.map((role) => role.url);
+          //compare roles
 
-      if (userData && userData.dataValues.Group === decoded.Group) {
-        next();
-        // userRoles = userData.Roles.map((role) => role.url);
+          if (
+            userData &&
+            decoded &&
+            userRoles.includes(path) &&
+            decoded.Roles.includes(path)
+          ) {
+            req.user = decoded;
+            next();
+          } else {
+            res.json("401 Unauthorized Error");
+          }
+        } catch (error) {
+          res.json("Invalid token!");
+        }
       } else {
         res.json("Unknown user");
       }
-
-      //valid
-      // res.json(userData);
-
-      //invalid
-      // res.json("401 Unauthorized Error");
-    } else {
-      res.json("Unknown user");
     }
   },
 };
