@@ -73,10 +73,10 @@ module.exports = {
   },
 
   async isAuth(req, res, next) {
-    const ignorerole = ["/api/v1/login", "/api/v1/register"];
+    const ignoreRole = ["/api/v1/login", "/api/v1/register"];
     const path = req.path;
 
-    if (ignorerole.includes(path)) next();
+    if (ignoreRole.includes(path)) next();
     else {
       const token = req.header("Authorization")?.replace("Bearer ", "");
       if (token) {

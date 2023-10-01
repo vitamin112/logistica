@@ -1,7 +1,7 @@
 import express from "express";
-import apiLoginController from "../controller/apiLoginController";
 import apiController from "../controller/apiController";
-import { withToken } from "../midleWare/authMidleWare";
+import apiLoginController from "../controller/apiLoginController";
+import { isAuth, withToken } from "../middleWare/authMiddleWare";
 
 const router = express.Router();
 
@@ -10,6 +10,7 @@ const initApiRouter = (app) => {
   router.post("/register", apiLoginController.register);
   router.post("/login", withToken, apiLoginController.login);
 
+  app.use("/", isAuth);
   //api for user service
   router.get("/user/read", apiController.readAllUser);
   router.post("/user/create", apiController.crateNewUser);

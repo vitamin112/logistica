@@ -1,12 +1,11 @@
-import express from "express";
-import configViewEngine from "./config/viewEngine";
-import initWebRouter from "./routes/web";
-import initApiRouter from "./routes/api";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
-import { isAuth } from "./midleWare/authMidleWare";
-import connection from "./config/connectBD";
 import cors from "cors";
+import express from "express";
+import connection from "./config/connectBD";
+import configViewEngine from "./config/viewEngine";
+import initApiRouter from "./routes/api";
+import initWebRouter from "./routes/web";
 
 require("dotenv").config();
 
@@ -33,8 +32,6 @@ app.use(cookieParser());
 
 //connection
 connection();
-
-app.use("/", isAuth);
 
 //init web routes
 initApiRouter(app);
