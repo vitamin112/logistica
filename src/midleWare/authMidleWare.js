@@ -17,18 +17,18 @@ module.exports = {
         userKey = String(userKey).trim();
         password = String(password).trim();
 
-        let user = await db.User.findOne({
+        let user = await db.user.findOne({
           where: {
             [Op.or]: [{ email: userKey }, { phone: userKey }],
           },
           attributes: ["userName", "password"],
           include: [
             {
-              model: db.Group,
+              model: db.group,
               attributes: ["name"],
               include: [
                 {
-                  model: db.Role,
+                  model: db.role,
                   attributes: ["url"],
                   through: {
                     attributes: [],
@@ -73,22 +73,23 @@ module.exports = {
   },
 
   async isAuth(req, res, next) {
-    const ignoreRole = ["/api/v1/login", "/api/v1/register"];
+    const ignorerole = ["/api/v1/login", "/api/v1/register"];
     const path = req.path;
 
-    if (ignoreRole.includes(path)) next();
+    if (ignorerole.includes(path)) next();
     else {
       const token = req.header("Authorization")?.replace("Bearer ", "");
       if (token) {
         try {
           let decoded = verify(token, process.env.SECRET_KEY);
+
           //get role from db
-          let userData = await db.Group.findOne({
-            where: { name: decoded.Group },
-            attributes: [["name", "Group"]],
+          let userData = await db.group.findOne({
+            where: { name: decoded.group },
+            attributes: [["name", "group"]],
             include: [
               {
-                model: db.Role,
+                model: db.role,
                 attributes: ["url"],
                 through: {
                   attributes: [],
@@ -97,14 +98,14 @@ module.exports = {
             ],
           });
 
-          let userRoles = userData.Roles.map((role) => role.url);
+          let userroles = userData.roles.map((role) => role.url);
           //compare roles
 
           if (
             userData &&
             decoded &&
-            userRoles.includes(path) &&
-            decoded.Roles.includes(path)
+            userroles.includes(path) &&
+            decoded.roles.includes(path)
           ) {
             req.user = decoded;
             next();

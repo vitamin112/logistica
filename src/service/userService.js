@@ -29,13 +29,6 @@ const deleteUser = async (id) => {
 };
 
 const getUserList = async () => {
-  // let test = await db.User.findOne({
-  //   where: { id: 1 },
-  //   include: { model: db.Group },
-  //   raw: true,
-  //   nest: true,
-  // });
-
   let users = [];
   users = await db.User.findAll();
   return users;

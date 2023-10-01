@@ -11,7 +11,7 @@ module.exports = {
     try {
       let offset = (page - 1) * limit;
 
-      let { count, rows } = await db.User.findAndCountAll({
+      let { count, rows } = await db.user.findAndCountAll({
         offset,
         limit,
       });
@@ -46,10 +46,10 @@ module.exports = {
 
   async readAllUser() {
     try {
-      let ListUsers = await db.User.findAll({
+      let ListUsers = await db.user.findAll({
         attributes: ["userName", "email", "phone"],
         include: {
-          model: db.Group,
+          model: db.group,
           attributes: ["name", "description"],
         },
       });
@@ -101,7 +101,8 @@ module.exports = {
           data: {},
         });
       }
-      let ListUsers = await db.User.create(newUserData);
+      let ListUsers = await db.user.create(newUserData);
+
       return {
         Message: "Successfully",
         Code: 1,
@@ -119,7 +120,7 @@ module.exports = {
 
   async updateUser(userData) {
     try {
-      let result = await db.User.update(
+      let result = await db.user.update(
         {
           userName: userData.userName,
           address: userData.address,
@@ -157,7 +158,7 @@ module.exports = {
 
   async deleteUser(id) {
     try {
-      let result = await db.User.destroy({
+      let result = await db.user.destroy({
         where: {
           id,
         },

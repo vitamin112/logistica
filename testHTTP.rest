@@ -1,6 +1,6 @@
-get http://localhost:8080/user
+
+POST  http://localhost:8080/api/v1/login
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InTDoGkga2hv4bqjbiBt4bubaSIsIkdyb3VwIjoiZGV2IiwiUm9sZXMiOlsiL3VzZXIiLCIvdXNlci9jcmVhdGUtdXNlciJdLCJpYXQiOjE2OTU0ODU0NzEsImV4cCI6MTY5NjM4NTQ3MX0.CNuO9YxPEiqGuyeqmNvITeHE3hW239PLxrcm_ZXsf1I
 
 {
     "key": "new@gmail.com",
@@ -8,9 +8,18 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InTDo
 }
 
 ###
+POST  http://localhost:8080/api/v1/user/create
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InTDoGkga2hv4bqjbiBt4bubaSIsImdyb3VwIjoiZGV2Iiwicm9sZXMiOlsiL2FwaS92MS91c2VyIiwiL2FwaS92MS91c2VyL2NyZWF0ZSJdLCJpYXQiOjE2OTYxNDQ0MTgsImV4cCI6MTY5NzA0NDQxOH0.uwZIRZMnCs_D9mCqQ1RKXy1go5vnGSZEFrLjW3rQv6Y
+
+{
+    "userName": "new@gmail.com",
+    "password": "123"
+}
+
+###
 post http://localhost:8080/api/v1/register
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InTDoGkga2hv4bqjbiBt4bubaSIsIkdyb3VwIjoiZGV2IiwiUm9sZXMiOlsiL3VzZXIiLCIvdXNlci9jcmVhdGUtdXNlciJdLCJpYXQiOjE2OTU0ODU0NzEsImV4cCI6MTY5NjM4NTQ3MX0.CNuO9YxPEiqGuyeqmNvITeHE3hW239PLxrcm_ZXsf1I
 
 {
     "email": "new@gmail.com",

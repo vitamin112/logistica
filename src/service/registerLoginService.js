@@ -27,7 +27,7 @@ module.exports = {
     let userPassword = String(rawData.password).trim();
 
     try {
-      const checkEmail = await db.User.findOne({
+      const checkEmail = await db.user.findOne({
         where: { email: rawData.email },
       });
 
@@ -38,7 +38,7 @@ module.exports = {
         };
       }
 
-      const checkPhone = await db.User.findOne({
+      const checkPhone = await db.user.findOne({
         where: { phone: rawData.phone },
       });
       if (checkPhone !== null) {
@@ -51,7 +51,7 @@ module.exports = {
       //hash password
       let hashPass = hashPassword(rawData.password);
 
-      await db.User.create({
+      await db.user.create({
         userName: rawData.userName.trim(),
         email: rawData.email.trim(),
         phone: rawData.phone.trim(),
@@ -85,18 +85,18 @@ module.exports = {
       let userKey = String(userData.key).trim();
       let userPassword = String(userData.password).trim();
 
-      let user = await db.User.findOne({
+      let user = await db.user.findOne({
         where: {
           [Op.or]: [{ email: userKey }, { phone: userKey }],
         },
         attributes: ["userName", "password"],
         include: [
           {
-            model: db.Group,
+            model: db.group,
             attributes: ["name"],
             include: [
               {
-                model: db.Role,
+                model: db.role,
                 attributes: ["url"],
                 through: {
                   attributes: [],
@@ -112,16 +112,16 @@ module.exports = {
           user.password
         );
 
-        const urls = user.Group.Roles
-          ? user.Group.Roles.map((role) => role.url)
+        const urls = user.group.roles
+          ? user.group.roles.map((role) => role.url)
           : [];
 
         if (isCheckedPassword) {
           //create a token
           let payload = {
             userName: user.userName,
-            Group: user.Group.name,
-            Roles: urls,
+            group: user.group.name,
+            roles: urls,
           };
           let secretKey = process.env.SECRET_KEY;
 
