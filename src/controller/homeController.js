@@ -3,48 +3,68 @@ import userService from "../service/userService";
 module.exports = {
   async index(req, res) {
     let userList = await userService.getUserList();
-    res.render("home", { userList });
+    let trash = await userService.getTrash();
+    res.render("home", { userList, trash });
   },
 
   async handleCreateNewUser(req, res) {
-    const name = req.body.name;
-    const email = req.body.email;
-    const password = req.body.password;
+    const userData = req.body;
 
-    await userService.createNewUser(name, email, password);
-    res.redirect("/");
+    let result = await userService.createNewUser(userData);
+    if (result) {
+      res.redirect("/");
+    } else {
+      res.send("Failed to create");
+    }
   },
 
-  handleDeleteUser(req, res) {
+  async handleDeleteUser(req, res) {
     const id = req.params.id;
 
-    userService.deleteUser(id);
+    await userService.deleteUser(id);
 
-    res.redirect("/");
+    res.redirect("back");
+  },
+
+  async handleDestroyUser(req, res) {
+    const id = req.params.id;
+
+    await userService.destroyUser(id);
+
+    res.redirect("back");
+  },
+
+  async handleRestore(req, res) {
+    const id = req.params.id;
+
+    await userService.restore(id);
+
+    res.redirect("back");
   },
 
   async getUserToUpdate(req, res) {
     const id = req.params.id;
 
     let user = await userService.getUserById(id);
-
-    res.render("updateUser", { user });
+    if (user) {
+      res.render("updateUser", { user });
+    } else {
+      res.send("user not found!");
+    }
   },
 
-  async showUserList(req, res) {
-    let userList = await userService.getUserList();
-    res.render("user", { userList });
+  async showPagination(req, res) {
+    let userList = await userService.getPagination(req.query);
+    let trash = await userService.getTrash();
+    res.render("home", { userList, trash });
+  },
+
+  async showTrash(req, res) {
+    let trash = await userService.getTrash();
+    res.render("trash", { trash });
   },
 
   async handleUpdateUser(req, res) {
-    let url = req.url;
-    let userRoles = req.user.Roles;
-
-    console.log(userRoles, req.url);
-    console.log(userRoles.includes(url));
-
-    if (req.user.Roles.includes(url)) console.log("you don't have permission!");
-
     let name = req.body.name;
     let email = req.body.email;
     let id = req.body.id;

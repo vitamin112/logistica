@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
+      paranoid: true,
       freezeTableName: true,
       modelName: "Project",
     }
