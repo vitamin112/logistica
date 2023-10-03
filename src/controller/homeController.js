@@ -4,7 +4,7 @@ module.exports = {
   async index(req, res) {
     let userList = await userService.getUserList();
     let trash = await userService.getTrash();
-    res.render("home", { userList, trash });
+    res.render("home", { userList, trash, pages: 1, limit: 0, currentPage: 0 });
   },
 
   async handleCreateNewUser(req, res) {
@@ -16,6 +16,10 @@ module.exports = {
     } else {
       res.send("Failed to create");
     }
+  },
+
+  async createNewUser(req, res) {
+    res.render("user");
   },
 
   async handleDeleteUser(req, res) {
@@ -54,9 +58,14 @@ module.exports = {
   },
 
   async showPagination(req, res) {
-    let userList = await userService.getPagination(req.query);
+    console.log("check req: ", req.query);
+    let { userList, pages, limit, currentPage } =
+      await userService.getPagination({
+        page: +req.query.page,
+        limit: +req.query.limit,
+      });
     let trash = await userService.getTrash();
-    res.render("home", { userList, trash });
+    res.render("home", { userList, trash, pages, limit, currentPage });
   },
 
   async showTrash(req, res) {

@@ -6,6 +6,8 @@
     "host": "103.97.126.24",
     "dialect": "mysql",
     "logging": false,
+    "charset": "utf8",
+    "collate": "utf8mb4_unicode_ci",
     "define": {
       "freezeTableName": true
     }

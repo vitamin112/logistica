@@ -7,6 +7,8 @@ const sequelize = new Sequelize(
   {
     host: "103.97.126.24",
     dialect: "mysql",
+    charset: "utf8mb4",
+    collate: "utf8mb4_unicode_ci",
     pool: {
       max: 5,
       min: 0,

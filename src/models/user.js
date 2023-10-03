@@ -27,6 +27,8 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       paranoid: true,
       freezeTableName: true,
+      charset: "utf8",
+      collate: "utf8_unicode_ci",
       modelName: "user",
     }
   );

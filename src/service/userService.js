@@ -90,11 +90,30 @@ const getTrash = async () => {
 };
 
 const getUserById = async (id) => {
-  return await db.user.findOne({ where: { id } });
+  try {
+    return await db.user.findOne({ where: { id } });
+  } catch (error) {
+    console.log(error);
+    return {};
+  }
 };
 
 const getPagination = async ({ page, limit }) => {
-  return await db.user.findAll({ offset: +page, limit: +limit });
+  try {
+    let { count, rows } = await db.user.findAndCountAll({
+      offset: page * limit,
+      limit: limit,
+    });
+    return {
+      userList: rows,
+      pages: Math.ceil(count / limit),
+      limit,
+      currentPage: page,
+    };
+  } catch (error) {
+    console.log(error);
+    return {};
+  }
 };
 
 const updateUser = async (name, email, id) => {

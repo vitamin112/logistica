@@ -16,7 +16,7 @@
     <div class="container">
         <h1>this is home page
         </h1>
-        <a href="/user" class="btn btn-danger">create</a>
+        <a href="/user/create-user" class="btn btn-info">create</a>
         <a href="/trash" class="btn btn-secondary">🗑 (<%= trash.count %>)</a>
         <table class="table table-hover table-dark mt-3">
             <thead>
@@ -30,7 +30,12 @@
                 <% userList.forEach(function(item, index) { %>
                     <tr>
                         <th scope="row">
-                            <%= index + 1 %>
+
+                            <% if (pages>0) { %>
+                                <%= currentPage * limit + index + 1 %>
+                                    <%} else { %>
+                                        <%= index + 1 %>
+                                            <% } %>
                         </th>
                         <td>
                             <%= item.userName %>
@@ -49,13 +54,20 @@
                     <% }); %>
             </tbody>
         </table>
+
         <nav aria-label="Page navigation example">
             <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="?page=1&limit=3#">1</a></li>
-                <li class="page-item"><a class="page-link" href="?page=2&limit=3#">2</a></li>
-                <li class="page-item"><a class="page-link" href="?page=3&limit=3#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+
+                <% if (pages> 1) { %>
+                    <% for (let i=0; i < pages; i++) { %>
+                        <li class="page-item"><a class="page-link" href="/user?page=<%= i %>&limit=<%= limit %>">
+                                <%= i+1 %>
+                            </a></li>
+                        <% } %>
+                            <% } else { %>
+                                <a class="page-link" href="/user?page=0&limit=4">List</a>
+                                <% } %>
+
             </ul>
         </nav>
     </div>
