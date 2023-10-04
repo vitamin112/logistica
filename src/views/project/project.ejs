@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Latest compiled and minified CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+
+    <title>Create new project</title>
+  </head>
+
+  <body>
+    <div class="container my-5">
+      <h1>Create new project</h1>
+      <form
+        method="POST"
+        id="createForm"
+        class="border border-1 border-black p-2 rounded-3"
+        action="/project/create"
+      >
+        <div class="form-group mt-4">
+          <label for="inputName" class="h5">Name</label>
+          <input
+            name="name"
+            type="Name"
+            class="form-control"
+            id="inputName"
+            aria-describedby="NameHelp"
+            placeholder="Enter Name"
+          />
+        </div>
+        <div class="form-group mt-4">
+          <label for="inputDesc" class="h5">Description</label>
+          <input
+            name="description"
+            type="text"
+            class="form-control"
+            id="inputDesc"
+            placeholder="Description"
+          />
+        </div>
+
+        <input
+          type="button"
+          onclick="isValid()"
+          class="btn btn-primary"
+          value="submit"
+        />
+        <a class="btn btn-secondary" href="/project">Cancel</a>
+      </form>
+    </div>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/toastify-js"
+    ></script>
+    <script>
+      let createForm = document.getElementById("createForm");
+
+      let isValid = function () {
+        let nameText = document.getElementById("inputName").value;
+        let emailText = document.getElementById("inputDesc").value;
+
+        if (nameText == "" && emailText == "") {
+          Toastify({
+            text: "You need to fill all the fields",
+            duration: 3000,
+            style: {
+              background: "red",
+              borderRadius: "5px",
+            },
+          }).showToast();
+        } else {
+          createForm.submit();
+        }
+      };
+    </script>
+  </body>
+</html>

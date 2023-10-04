@@ -5,6 +5,7 @@ import express from "express";
 import connection from "./config/connectBD";
 import configViewEngine from "./config/viewEngine";
 import initApiRouter from "./routes/api";
+import projectRouter from "./routes/apiProject";
 import initWebRouter from "./routes/web";
 
 require("dotenv").config();
@@ -35,6 +36,7 @@ connection();
 
 //init web routes
 initApiRouter(app);
+projectRouter(app);
 initWebRouter(app);
 
 app.listen(PORT, () => {

@@ -14,12 +14,12 @@ module.exports = {
     if (result) {
       res.redirect("/");
     } else {
-      res.send("Failed to create");
+      res.render("user", { message: "Please check your fields!" });
     }
   },
 
   async createNewUser(req, res) {
-    res.render("user");
+    res.render("user", { message: "" });
   },
 
   async handleDeleteUser(req, res) {
@@ -58,14 +58,25 @@ module.exports = {
   },
 
   async showPagination(req, res) {
-    console.log("check req: ", req.query);
-    let { userList, pages, limit, currentPage } =
-      await userService.getPagination({
-        page: +req.query.page,
-        limit: +req.query.limit,
-      });
     let trash = await userService.getTrash();
-    res.render("home", { userList, trash, pages, limit, currentPage });
+
+    if (req.query.page && req.query.page) {
+      let { userList, pages, limit, currentPage } =
+        await userService.getPagination({
+          page: +req.query.page,
+          limit: +req.query.limit,
+        });
+      res.render("home", { userList, trash, pages, limit, currentPage });
+    } else {
+      let userList = await userService.getUserList();
+      res.render("home", {
+        userList,
+        trash,
+        pages: 1,
+        limit: 0,
+        currentPage: 0,
+      });
+    }
   },
 
   async showTrash(req, res) {
@@ -76,10 +87,11 @@ module.exports = {
   async handleUpdateUser(req, res) {
     let name = req.body.name;
     let email = req.body.email;
+    let address = req.body.address;
     let id = req.body.id;
 
     try {
-      await userService.updateUser(name, email, id);
+      await userService.updateUser(address, name, email, id);
     } catch (error) {
       console.log(error);
     }

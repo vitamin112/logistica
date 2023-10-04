@@ -11,7 +11,10 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
       },
-      startFate: {
+      description: {
+        type: Sequelize.STRING,
+      },
+      startDate: {
         type: Sequelize.DATE,
       },
       customerId: {

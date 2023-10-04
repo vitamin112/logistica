@@ -116,10 +116,10 @@ const getPagination = async ({ page, limit }) => {
   }
 };
 
-const updateUser = async (name, email, id) => {
+const updateUser = async (address, name, email, id) => {
   try {
     await db.user.update(
-      { userName: name, email },
+      { userName: name, email, address },
       {
         where: {
           id,

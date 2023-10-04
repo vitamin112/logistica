@@ -13,6 +13,7 @@
 </head>
 
 <body>
+
     <div class="container border border-1 border-black mt-5">
         <h1>update page</h1>
         <form method="POST" action="/user/update-user">
@@ -24,12 +25,18 @@
             <input hidden name="id" value="<%= user.id %>">
             <div class="form-group mt-4">
                 <label for="inputName" class="h5">Name</label>
-                <input name="name" type="Name" value="<%= user.userName %>" class="form-control" id="inputName"
+                <input name="name" type="text" value="<%= user.userName %>" class="form-control" id="inputName"
                     aria-describedby="NameHelp" placeholder="Enter Name" />
+            </div>
+            <div class="form-group mt-4">
+                <label for="inputAddress" class="h5">Address</label>
+                <input name="address" type="text" value="<%= user.address %>" class="form-control" id="inputAddress"
+                    aria-describedby="NameHelp" placeholder="Enter Address" />
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
+
 </body>
 
 </html>
