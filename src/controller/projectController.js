@@ -22,4 +22,22 @@ module.exports = {
   create(req, res) {
     res.render("project/project");
   },
+  async update(req, res) {
+    let id = req.params.id;
+    let project = await projectService.getById(id);
+    res.render("project/update", { project });
+  },
+  async handleUpdate(req, res) {
+    let rawData = { ...req.body };
+
+    await projectService.update(rawData);
+    res.redirect("/project");
+  },
+
+  async handleDelete(req, res) {
+    let id = req.params.id;
+
+    await projectService.delete(id);
+    res.redirect("/project");
+  },
 };

@@ -58,34 +58,34 @@
       </div>
 
       <h1>this is home page</h1>
-      <a href="/project/create" class="btn btn-info">create</a>
-
+      <a href="/user/create-user" class="btn btn-info">create</a>
+      <a href="/trash" class="btn btn-secondary">🗑 (<%= trash.count %>)</a>
       <table class="table table-hover table-dark mt-3">
         <thead>
           <tr>
             <th scope="col">#</th>
             <th scope="col">name</th>
-            <th scope="col">description</th>
-            <th scope="col">startDate</th>
-            <th scope="col"></th>
+            <th scope="col">address</th>
+            <th scope="col" colspan="2">email</th>
           </tr>
         </thead>
         <tbody>
-          <% if (projectList.length>0) { %> <%
-          projectList.forEach(function(item, index) { %>
+          <% if (userList.length>0) { %> <% userList.forEach(function(item,
+          index) { %>
           <tr>
-            <th scope="row">1</th>
-            <td><%= item.name %></td>
-            <td class="text-truncate" style="max-width: 400px">
-              <%= item.description %>
-            </td>
-            <td><%= item.startDate %></td>
+            <th scope="row">
+              <% if (pages>0) { %> <%= currentPage * limit + index + 1 %> <%}
+              else { %> <%= index + 1 %> <% } %>
+            </th>
+            <td><%= item.userName %></td>
+            <td><%= item.email %></td>
+            <td><%= item.address %></td>
 
             <td>
-              <a href="/project/update/<%= item.id %>" class="btn btn-warning"
+              <a href="/update-user/<%= item.id %>" class="btn btn-warning"
                 >Edit</a
               >
-              <!-- Button trigger delete modal -->
+              <!-- Button trigger modal -->
               <button
                 type="button"
                 class="btn btn-danger"
@@ -106,6 +106,20 @@
           <% } %>
         </tbody>
       </table>
+
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <% if (pages> 1) { %> <% for (let i=0; i < pages; i++) { %>
+          <li class="page-item">
+            <a class="page-link" href="/user?page=<%= i %>&limit=<%= limit %>">
+              <%= i+1 %>
+            </a>
+          </li>
+          <% } %> <% } else { %>
+          <a class="page-link" href="/user?page=0&limit=4">List</a>
+          <% } %>
+        </ul>
+      </nav>
     </div>
 
     <script>
@@ -113,7 +127,7 @@
       let deleteBtn = document.getElementById("deleteBtn");
 
       function setDeleteID(id) {
-        deleteForm.action = "/project/delete/" + id;
+        deleteForm.action = "/user/delete-user/" + id;
       }
 
       deleteBtn.onclick = () => {

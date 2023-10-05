@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "ejbqqdes_nodejs",
+    "username": "root",
     "password": "12345678",
-    "database": "ejbqqdes_nodejs",
-    "host": "103.97.126.24",
+    "database": "nodejs",
+    "host": "localhost",
     "dialect": "mysql",
     "logging": false,
     "charset": "utf8",

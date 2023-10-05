@@ -4,7 +4,13 @@ module.exports = {
   async index(req, res) {
     let userList = await userService.getUserList();
     let trash = await userService.getTrash();
-    res.render("home", { userList, trash, pages: 1, limit: 0, currentPage: 0 });
+    res.render("user/home", {
+      userList,
+      trash,
+      pages: 1,
+      limit: 0,
+      currentPage: 0,
+    });
   },
 
   async handleCreateNewUser(req, res) {
@@ -14,12 +20,12 @@ module.exports = {
     if (result) {
       res.redirect("/");
     } else {
-      res.render("user", { message: "Please check your fields!" });
+      res.render("user/user", { message: "Please check your fields!" });
     }
   },
 
   async createNewUser(req, res) {
-    res.render("user", { message: "" });
+    res.render("user/user", { message: "" });
   },
 
   async handleDeleteUser(req, res) {
@@ -51,7 +57,7 @@ module.exports = {
 
     let user = await userService.getUserById(id);
     if (user) {
-      res.render("updateUser", { user });
+      res.render("user/updateUser", { user });
     } else {
       res.send("user not found!");
     }
@@ -66,10 +72,10 @@ module.exports = {
           page: +req.query.page,
           limit: +req.query.limit,
         });
-      res.render("home", { userList, trash, pages, limit, currentPage });
+      res.render("user/home", { userList, trash, pages, limit, currentPage });
     } else {
       let userList = await userService.getUserList();
-      res.render("home", {
+      res.render("user/home", {
         userList,
         trash,
         pages: 1,
@@ -81,7 +87,7 @@ module.exports = {
 
   async showTrash(req, res) {
     let trash = await userService.getTrash();
-    res.render("trash", { trash });
+    res.render("user/trash", { trash });
   },
 
   async handleUpdateUser(req, res) {
