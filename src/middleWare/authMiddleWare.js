@@ -73,8 +73,9 @@ module.exports = {
   },
 
   async isAuth(req, res, next) {
-    const ignoreRole = ["/login", "/register"];
+    const ignoreRole = ["/api/v1/login", "/api/v1/register"];
     const path = req.path;
+    console.log(path);
 
     if (ignoreRole.includes(path)) next();
     else {
@@ -116,7 +117,8 @@ module.exports = {
           res.json("Invalid token!");
         }
       } else {
-        res.json("Unknown user");
+        console.log("change");
+        res.redirect("/api/v1/login");
       }
     }
   },

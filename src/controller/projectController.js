@@ -3,8 +3,9 @@ import projectService from "../service/projectService";
 module.exports = {
   async handleShow(req, res) {
     let projectList = await projectService.read();
+    let trash = await projectService.trash();
     if (projectList) {
-      res.render("project", { projectList });
+      res.render("project", { projectList, path: "/project", trash });
     } else {
       res.send("No project found");
     }
@@ -39,5 +40,24 @@ module.exports = {
 
     await projectService.delete(id);
     res.redirect("/project");
+  },
+  async handleDestroy(req, res) {
+    let id = req.params.id;
+
+    await projectService.delete(id);
+    res.redirect("/project");
+  },
+  async getTrash(req, res) {
+    let trash = await projectService.trash();
+    res.render("project/trash", { trash });
+  },
+  async handleRestore(req, res) {
+    let id = req.params.id;
+    let project = await projectService.restore(id);
+    if (project) {
+      res.redirect("back");
+    } else {
+      res.send("false to restore!");
+    }
   },
 };

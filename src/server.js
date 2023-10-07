@@ -4,6 +4,7 @@ import cors from "cors";
 import express from "express";
 import connection from "./config/connectBD";
 import configViewEngine from "./config/viewEngine";
+import authMiddleWare from "./middleWare/authMiddleWare";
 import initApiRouter from "./routes/api";
 import projectRouter from "./routes/apiProject";
 import initWebRouter from "./routes/web";
@@ -35,6 +36,8 @@ app.use(cookieParser());
 connection();
 
 //init web routes
+
+app.use("/", authMiddleWare.isAuth);
 initApiRouter(app);
 projectRouter(app);
 initWebRouter(app);

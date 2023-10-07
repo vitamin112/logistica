@@ -2,15 +2,7 @@ import userService from "../service/userService";
 
 module.exports = {
   async index(req, res) {
-    let userList = await userService.getUserList();
-    let trash = await userService.getTrash();
-    res.render("user/home", {
-      userList,
-      trash,
-      pages: 1,
-      limit: 0,
-      currentPage: 0,
-    });
+    res.render("index");
   },
 
   async handleCreateNewUser(req, res) {
@@ -72,13 +64,21 @@ module.exports = {
           page: +req.query.page,
           limit: +req.query.limit,
         });
-      res.render("user/home", { userList, trash, pages, limit, currentPage });
+      res.render("user/home", {
+        userList,
+        trash,
+        pages,
+        path: "/user",
+        limit,
+        currentPage,
+      });
     } else {
       let userList = await userService.getUserList();
       res.render("user/home", {
         userList,
         trash,
         pages: 1,
+        path: "/user",
         limit: 0,
         currentPage: 0,
       });

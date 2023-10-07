@@ -1,6 +1,6 @@
 const registerLoginService = require("../service/registerLoginService");
 
-const register = async (req, res) => {
+const handleRegister = async (req, res) => {
   //validate
   try {
     if (
@@ -36,7 +36,7 @@ const register = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
+const handleLogin = async (req, res) => {
   //validate
   try {
     if (req.body.key === "" || req.body.password === "") {
@@ -64,8 +64,15 @@ const login = async (req, res) => {
     });
   }
 };
-
+const login = (req, res) => {
+  res.render("pages/login");
+};
+const register = (req, res) => {
+  res.render("login");
+};
 module.exports = {
+  handleLogin,
+  handleRegister,
   register,
   login,
 };
