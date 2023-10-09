@@ -4,7 +4,13 @@
 npx sequelize-cli db:migrate
 ```
 
-# 2.Config to connect DB
+# 2.Running seeds
+
+```
+npx sequelize-cli db:seed:all
+```
+
+# 3.Config to connect DB
 
 ```
 {

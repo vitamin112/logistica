@@ -13,9 +13,9 @@ const formattedDate = function (date) {
 
 module.exports = {
   async read() {
-    let projectList = await db.project.findAll();
+    let postList = await db.post.findAll();
 
-    let formattedList = projectList.map((item) => {
+    let formattedList = postList.map((item) => {
       item.startDate = formattedDate(item.startDate);
 
       return item;
@@ -25,37 +25,51 @@ module.exports = {
   },
 
   async getById(id) {
-    let project = await db.project.findOne({ where: { id } });
-
-    project.startDate = formattedDate(project.startDate);
-    console.log(project.startDate);
-    return project;
+    let post = await db.post.findOne({ where: { id }, raw: true });
+    // post.startDate = formattedDate(post.startDate);
+    return {
+      message: "Success",
+      code: 1,
+      data: post,
+    };
   },
 
   async create(rawData) {
-    let project = await db.project.create(rawData);
-    return project;
+    let post = await db.post.create(rawData);
+    return post;
   },
 
-  async update(data) {
-    let project = await db.project.update(data, { where: { id: data.id } });
+  async update(id, data) {
+    let post = await db.post.update(data, { where: { id } });
 
-    return project;
+    if (post[0]) {
+      return {
+        message: "Success",
+        code: 1,
+        data: {},
+      };
+    } else {
+      return {
+        message: "update failed",
+        code: -1,
+        data: {},
+      };
+    }
   },
 
   async delete(id) {
-    let project = await db.project.destroy({ where: { id } });
-    return project;
+    let post = await db.post.destroy({ where: { id } });
+    return post;
   },
   async destroy(id) {
     try {
-      let project = await db.project.destroy({
+      let post = await db.post.destroy({
         where: {
           id,
         },
         force: true,
       });
-      return project;
+      return post;
     } catch (e) {
       console.log("Error: ", e);
       return;
@@ -63,7 +77,7 @@ module.exports = {
   },
   async trash() {
     try {
-      const { count, rows } = await db.project.findAndCountAll({
+      const { count, rows } = await db.post.findAndCountAll({
         paranoid: false,
         where: { deletedAt: { [Op.not]: null } },
       });
@@ -75,10 +89,10 @@ module.exports = {
   },
   async restore(id) {
     try {
-      let project = await db.project.findByPk(id, { paranoid: false });
-      if (project) {
-        await project.restore();
-        return project;
+      let post = await db.post.findByPk(id, { paranoid: false });
+      if (post) {
+        await post.restore();
+        return post;
       }
     } catch (e) {
       console.log("Error: ", e);

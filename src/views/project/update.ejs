@@ -30,7 +30,7 @@
             type="Name"
             class="form-control"
             id="inputName"
-            value="<%= project.name %>"
+            value="<%= post.name %>"
             aria-describedby="NameHelp"
             placeholder="Enter Name"
           />
@@ -46,7 +46,7 @@
             placeholder="Description"
             rows="3"
           >
-<%= project.description %>
+<%= post.description %>
             </textarea
           >
         </div>
@@ -58,10 +58,10 @@
             type="date"
             class="form-control"
             id="inputDate"
-            value="<%= project.startDate %>"
+            value="<%= post.startDate %>"
           />
         </div>
-        <input type="hidden" name="id" value="<%= project.id %>" />
+        <input type="hidden" name="id" value="<%= post.id %>" />
         <input
           type="button"
           onclick="isValid()"

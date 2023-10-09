@@ -29,7 +29,7 @@ const handleRegister = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: "Something went wrong 111",
+      message: "Something went wrong!",
       code: -2,
       data: {},
     });
@@ -47,16 +47,29 @@ const handleLogin = async (req, res) => {
       });
     }
 
-    //call service to register
     let result = await registerLoginService.handleLogin(req.body);
 
-    //return message
-    return res.status(200).json({
-      message: result.message,
-      code: result.code,
-      data: result.data,
-    });
+    if (result.code == 1) {
+      let options = {
+        maxAge: 1000 * 60 * 30,
+        httpOnly: true,
+      };
+
+      res.cookie("token", result.data?.jwtToken, options);
+      return res.status(200).json({
+        message: result.message,
+        code: result.code,
+        data: result.data,
+      });
+    } else {
+      return res.status(200).json({
+        message: result.message,
+        code: result.code,
+        data: {},
+      });
+    }
   } catch (error) {
+    console.log("Login error: ", error);
     return res.status(500).json({
       message: "Something went wrong",
       code: -2,
@@ -65,10 +78,10 @@ const handleLogin = async (req, res) => {
   }
 };
 const login = (req, res) => {
-  res.render("pages/login");
+  res.render("pages/login/login");
 };
 const register = (req, res) => {
-  res.render("login");
+  res.render("pages/register");
 };
 module.exports = {
   handleLogin,

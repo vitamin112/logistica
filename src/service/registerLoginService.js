@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
-import db from "../models";
 import jwt from "jsonwebtoken";
+import db from "../models";
 const { Op } = require("sequelize");
 
 const hashPassword = (userPassword) => {
@@ -41,6 +41,7 @@ module.exports = {
       const checkPhone = await db.user.findOne({
         where: { phone: rawData.phone },
       });
+
       if (checkPhone !== null) {
         return {
           Message: "Your phone number is exists",
@@ -48,19 +49,19 @@ module.exports = {
         };
       }
 
-      //hash password
       let hashPass = hashPassword(rawData.password);
 
       await db.user.create({
         userName: rawData.userName.trim(),
         email: rawData.email.trim(),
         phone: rawData.phone.trim(),
-        sex: rawData.sex.trim(),
+        img: rawData.img,
+        dob: rawData.dob,
+        sex: rawData.sex,
         address: rawData.address.trim(),
         password: hashPass,
         groupId: 1,
       });
-
       return {
         Message: "Your has been registered",
         Code: 1,
@@ -94,39 +95,26 @@ module.exports = {
           {
             model: db.group,
             attributes: ["name"],
-            include: [
-              {
-                model: db.role,
-                attributes: ["url"],
-                through: {
-                  attributes: [],
-                },
-              },
-            ],
           },
         ],
       });
+
       if (user) {
         let isCheckedPassword = await bcrypt.compare(
           userPassword,
           user.password
         );
 
-        const urls = user.group.roles
-          ? user.group.roles.map((role) => role.url)
-          : [];
-
         if (isCheckedPassword) {
           //create a token
           let payload = {
             userName: user.userName,
             group: user.group.name,
-            roles: urls,
           };
           let secretKey = process.env.SECRET_KEY;
 
           let jwtToken = jwt.sign(payload, secretKey, {
-            expiresIn: 30 * 30 * 1000,
+            expiresIn: 1000 * 60 * 60,
           });
 
           return {
@@ -140,7 +128,7 @@ module.exports = {
         }
       }
       return {
-        message: "login failed ",
+        message: "Phone/ email or password is incorrect!",
         code: -1,
         data: {},
       };

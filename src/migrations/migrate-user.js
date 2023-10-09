@@ -10,6 +10,9 @@ module.exports = {
           primaryKey: true,
           type: Sequelize.INTEGER,
         },
+        imgId: {
+          type: Sequelize.INTEGER,
+        },
         userName: {
           type: Sequelize.STRING,
           collate: "utf8mb4_unicode_ci",
@@ -30,10 +33,12 @@ module.exports = {
         password: {
           type: Sequelize.STRING,
         },
+        dob: {
+          type: Sequelize.DATE,
+        },
         groupId: {
           type: Sequelize.INTEGER,
         },
-
         createdAt: {
           allowNull: false,
           type: Sequelize.DATE,

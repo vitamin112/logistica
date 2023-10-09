@@ -10,16 +10,20 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       user.belongsTo(models.group);
-      user.belongsToMany(models.project, { through: "project_user" });
+      user.hasMany(models.post);
+      user.hasMany(models.comment);
+      user.hasOne(models.image);
     }
   }
   user.init(
     {
       userName: DataTypes.STRING,
-      address: DataTypes.STRING,
       email: DataTypes.STRING,
       phone: DataTypes.STRING,
+      address: DataTypes.STRING,
       sex: DataTypes.STRING,
+      dob: DataTypes.DATE,
+      imgId: DataTypes.STRING,
       password: DataTypes.STRING,
       groupId: DataTypes.INTEGER,
     },

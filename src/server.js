@@ -4,9 +4,7 @@ import cors from "cors";
 import express from "express";
 import connection from "./config/connectBD";
 import configViewEngine from "./config/viewEngine";
-import authMiddleWare from "./middleWare/authMiddleWare";
 import initApiRouter from "./routes/api";
-import projectRouter from "./routes/apiProject";
 import initWebRouter from "./routes/web";
 
 require("dotenv").config();
@@ -35,13 +33,16 @@ app.use(cookieParser());
 //connection
 connection();
 
-//init web routes
+//check authentication
+// app.all("*", authMiddleware.checkToken, authMiddleware.isAuth);
 
-app.use("/", authMiddleWare.isAuth);
-initApiRouter(app);
-projectRouter(app);
+//init routes
 initWebRouter(app);
+initApiRouter(app);
 
+app.get("*", (req, res) => {
+  res.render("notFound");
+});
 app.listen(PORT, () => {
   console.log("App is running on the port " + PORT);
 });

@@ -1,11 +1,7 @@
 import userService from "../service/userService";
 
 module.exports = {
-  async index(req, res) {
-    res.render("index");
-  },
-
-  async handleCreateNewUser(req, res) {
+  async handleCreate(req, res) {
     const userData = req.body;
 
     let result = await userService.createNewUser(userData);
@@ -20,7 +16,7 @@ module.exports = {
     res.render("user/user", { message: "" });
   },
 
-  async handleDeleteUser(req, res) {
+  async handleDelete(req, res) {
     const id = req.params.id;
 
     await userService.deleteUser(id);
@@ -28,7 +24,7 @@ module.exports = {
     res.redirect("back");
   },
 
-  async handleDestroyUser(req, res) {
+  async handleDestroy(req, res) {
     const id = req.params.id;
 
     await userService.destroyUser(id);
@@ -44,7 +40,7 @@ module.exports = {
     res.redirect("back");
   },
 
-  async getUserToUpdate(req, res) {
+  async getById(req, res) {
     const id = req.params.id;
 
     let user = await userService.getUserById(id);
@@ -55,7 +51,7 @@ module.exports = {
     }
   },
 
-  async showPagination(req, res) {
+  async handleShow(req, res) {
     let trash = await userService.getTrash();
 
     if (req.query.page && req.query.page) {
@@ -85,12 +81,12 @@ module.exports = {
     }
   },
 
-  async showTrash(req, res) {
+  async getTrash(req, res) {
     let trash = await userService.getTrash();
     res.render("user/trash", { trash });
   },
 
-  async handleUpdateUser(req, res) {
+  async handleUpdate(req, res) {
     let name = req.body.name;
     let email = req.body.email;
     let address = req.body.address;

@@ -2,123 +2,70 @@ import { verify } from "jsonwebtoken";
 import db from "../models";
 const { Op } = require("sequelize");
 
+const ignoreRole = ["/", "/api/v1/login", "/api/v1/register"];
+
 module.exports = {
-  async withToken(req, res, next) {
-    let userKey = req.body.key;
-    let password = req.body.password;
-    try {
-      if (!userKey || !password)
-        res.json({
-          message: "you must fill all the fields",
-          code: -1,
-          data: {},
-        });
-      else {
-        userKey = String(userKey).trim();
-        password = String(password).trim();
-
-        let user = await db.user.findOne({
-          where: {
-            [Op.or]: [{ email: userKey }, { phone: userKey }],
-          },
-          attributes: ["userName", "password"],
-          include: [
-            {
-              model: db.group,
-              attributes: ["name"],
-              include: [
-                {
-                  model: db.role,
-                  attributes: ["url"],
-                  through: {
-                    attributes: [],
-                  },
-                },
-              ],
-            },
-          ],
-        });
-
-        if (user) {
-          // kiểm tra nếu có token
-          if (req.cookies.access_token) {
-            try {
-              if (verify(req.cookies.access_token, process.env.SECRET_KEY)) {
-                next();
-              }
-            } catch (error) {
-              res.json({
-                message: "token is invalid!",
-                code: -1,
-                data: {},
-              });
-              console.log("Some thing went wrong with token: ");
-              console.log(error);
-            }
-          } else {
-            next();
-          }
-        } else {
-          res.json({
-            message:
-              "Login failed! Please try checking your email/ phone number or password!",
-            code: -1,
-            data: {},
-          });
-        }
-      }
-    } catch (error) {
-      console.log(">>check error", error);
-    }
-  },
-
-  async isAuth(req, res, next) {
-    const ignoreRole = ["/api/v1/login", "/api/v1/register"];
+  async checkToken(req, res, next) {
     const path = req.path;
-    console.log(path);
+    if (ignoreRole.includes(path)) {
+      next();
+    } else {
+      const token =
+        req.header("Authorization")?.replace("Bearer ", "") ||
+        req.query.token ||
+        req.cookies["token"];
 
-    if (ignoreRole.includes(path)) next();
-    else {
-      const token = req.header("Authorization")?.replace("Bearer ", "");
       if (token) {
         try {
           let decoded = verify(token, process.env.SECRET_KEY);
 
+          let dateNow = new Date();
+
+          if (decoded.exp < dateNow.getTime() / 1000) {
+            console.log("Token expired");
+            res.redirect("/api/v1/login");
+          } else {
+            req.user = decoded;
+            next();
+          }
+        } catch (error) {
+          console.log("Verify token error: ", error);
+          res.json("Invalid token!");
+        }
+      } else {
+        res.redirect("/api/v1/login");
+      }
+    }
+  },
+
+  async isAuth(req, res, next) {
+    const path = req.path;
+
+    if (ignoreRole.includes(path)) {
+      next();
+    } else {
+      if (req.user) {
+        try {
           //get role from db
           let userData = await db.group.findOne({
-            where: { name: decoded.group },
+            where: { name: req.user.group },
             attributes: [["name", "group"]],
-            include: [
-              {
-                model: db.role,
-                attributes: ["url"],
-                through: {
-                  attributes: [],
-                },
-              },
-            ],
           });
-
-          let userroles = userData.roles.map((role) => role.url);
-          //compare roles
 
           if (
             userData &&
-            decoded &&
-            userroles.includes(path) &&
-            decoded.roles.includes(path)
+            req.user &&
+            userRoles.includes(path) &&
+            req.user.roles.includes(path)
           ) {
-            req.user = decoded;
             next();
           } else {
             res.json("401 Unauthorized Error");
           }
         } catch (error) {
+          console.log("Verify token error: ", error);
           res.json("Invalid token!");
         }
-      } else {
-        console.log("change");
-        res.redirect("/api/v1/login");
       }
     }
   },
