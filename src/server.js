@@ -34,7 +34,7 @@ app.use(cookieParser());
 connection();
 
 //check authentication
-// app.all("*", authMiddleware.checkToken, authMiddleware.isAuth);
+// app.all("*", authMiddleware.checkToken, authMiddleware.permissions);
 
 //init routes
 initWebRouter(app);

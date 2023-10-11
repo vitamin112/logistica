@@ -1,103 +1,200 @@
 import userService from "../service/userService";
 
+const checkUserPermission = (user, targetID) => {
+  if (user.userID === +targetID || user.group === "admin") {
+    return true;
+  }
+  return false;
+};
+const checkAdminPermission = (user) => {
+  if (user.group === "admin") {
+    return true;
+  }
+  return false;
+};
+
 module.exports = {
   async handleCreate(req, res) {
     const userData = req.body;
 
-    let result = await userService.createNewUser(userData);
+    let result = await userService.create(userData);
     if (result) {
-      res.redirect("/");
+      res.status(200).json({
+        message: result.message,
+        code: result.code,
+        data: result.data,
+      });
     } else {
-      res.render("user/user", { message: "Please check your fields!" });
+      res.status(200).json({
+        message: result.message,
+        code: result.code,
+        data: result.data,
+      });
     }
   },
 
-  async createNewUser(req, res) {
-    res.render("user/user", { message: "" });
+  async handleUpdate(req, res) {
+    let id = req.params.id;
+
+    if (checkUserPermission(req.user, id)) {
+      let rawData = { ...req.body };
+
+      let result = await userService.update(id, rawData);
+      res.status(200).json({
+        message: result.message,
+        code: result.code,
+        data: result.data,
+      });
+    } else {
+      res.status(200).json({
+        message: "you don't have permission!",
+        code: -1,
+        data: {},
+      });
+    }
   },
 
   async handleDelete(req, res) {
     const id = req.params.id;
+    if (checkAdminPermission(req.user) || req.userID !== id) {
+      let result = await userService.delete(id);
 
-    await userService.deleteUser(id);
-
-    res.redirect("back");
+      res.status(200).json({
+        message: result.message,
+        code: result.code,
+        data: result.data,
+      });
+    } else {
+      res.status(200).json({
+        message: "you can't delete yourself",
+        code: -1,
+        data: {},
+      });
+    }
   },
 
   async handleDestroy(req, res) {
-    const id = req.params.id;
+    let id = req.params.id;
 
-    await userService.destroyUser(id);
-
-    res.redirect("back");
+    if (checkAdminPermission(req.user) || req.userID !== id) {
+      let result = await userService.destroy(id);
+      res.status(200).json({
+        message: result.message,
+        code: result.code,
+        data: result.data,
+      });
+    } else {
+      res.status(200).json({
+        message: "you can't delete yourself",
+        code: -1,
+        data: {},
+      });
+    }
   },
 
   async handleRestore(req, res) {
+    let id = req.params.id;
+
+    if (checkAdminPermission(req.user)) {
+      let result = await userService.restore(id);
+      res.status(200).json({
+        message: result.message,
+        code: result.code,
+        data: result.data,
+      });
+    } else {
+      res.status(200).json({
+        message: "you don't have permission!",
+        code: -1,
+        data: {},
+      });
+    }
+  },
+
+  async getProfile(req, res) {
     const id = req.params.id;
 
-    await userService.restore(id);
+    let result = await userService.getProfile(id);
 
-    res.redirect("back");
+    res.status(200).json({
+      message: result.message,
+      code: result.code,
+      data: result.data,
+    });
   },
 
   async getById(req, res) {
     const id = req.params.id;
 
-    let user = await userService.getUserById(id);
-    if (user) {
-      res.render("user/updateUser", { user });
+    if (checkUserPermission(req.user, id)) {
+      let result = await userService.getById(id);
+      res.status(200).json({
+        message: result.message,
+        code: result.code,
+        data: result.data,
+      });
     } else {
-      res.send("user not found!");
+      res.status(200).json({
+        message: "you don't have permission!",
+        code: -1,
+        data: {},
+      });
     }
   },
 
   async handleShow(req, res) {
-    let trash = await userService.getTrash();
+    if (checkAdminPermission(req.user)) {
+      let trash = await userService.trash();
 
-    if (req.query.page && req.query.page) {
-      let { userList, pages, limit, currentPage } =
-        await userService.getPagination({
-          page: +req.query.page,
-          limit: +req.query.limit,
+      if (req.query.page && req.query.page) {
+        let { userList, pages, limit, currentPage } =
+          await userService.getPagination({
+            page: +req.query.page,
+            limit: +req.query.limit,
+          });
+        res.render("user/home", {
+          userList,
+          trash,
+          pages,
+          path: "/user",
+          limit,
+          currentPage,
         });
-      res.render("user/home", {
-        userList,
-        trash,
-        pages,
-        path: "/user",
-        limit,
-        currentPage,
-      });
+      } else {
+        let result = await userService.read();
+        res.status(200).json({
+          message: result.message,
+          code: result.code,
+          data: result.data,
+        });
+      }
     } else {
-      let userList = await userService.getUserList();
-      res.render("user/home", {
-        userList,
-        trash,
-        pages: 1,
-        path: "/user",
-        limit: 0,
-        currentPage: 0,
+      res.status(200).json({
+        message: "you don't have permission!",
+        code: -1,
+        data: {},
       });
     }
   },
 
   async getTrash(req, res) {
-    let trash = await userService.getTrash();
-    res.render("user/trash", { trash });
+    if (checkAdminPermission(req.user)) {
+      let result = await userService.trash();
+      res.status(200).json({
+        message: result.message,
+        code: result.code,
+        data: result.data,
+      });
+    } else {
+      res.status(200).json({
+        message: "user don't have permission ",
+        code: -1,
+        data: {},
+      });
+    }
   },
 
-  async handleUpdate(req, res) {
-    let name = req.body.name;
-    let email = req.body.email;
-    let address = req.body.address;
-    let id = req.body.id;
-
-    try {
-      await userService.updateUser(address, name, email, id);
-    } catch (error) {
-      console.log(error);
-    }
-
-    res.redirect("/");
+  async createNewUser(req, res) {
+    res.render("user/user", { message: "" });
   },
 };

@@ -7,60 +7,197 @@ const hashPassword = (userPassword) => {
   var hashPassword = bcrypt.hashSync(userPassword, salt);
   return hashPassword;
 };
+
 module.exports = {
-  async createNewUser(data) {
-    let hashPass = hashPassword(data.password);
-    let newUserData = {
-      userName: data.userName,
-      address: data.address,
-      email: data.email,
-      phone: data.phone,
-      sex: data.sex,
-      password: hashPass,
-      groupId: 1,
-    };
+  async create(data) {
     try {
       if (
-        newUserData.userName === "" ||
-        newUserData.email === "" ||
-        newUserData.phone === "" ||
-        newUserData.sex === "" ||
-        newUserData.address === "" ||
-        newUserData.password === ""
+        data.userName == "" ||
+        data.email == "" ||
+        data.phone == "" ||
+        data.sex == "" ||
+        data.address == "" ||
+        data.password == undefined
       ) {
-        return false;
+        return {
+          message: "you must to fill all the fields",
+          code: -1,
+          data: {},
+        };
       } else {
-        await db.user.create(newUserData);
-        return true;
+        let hashPass = hashPassword(data.password);
+        let newUserData = {
+          userName: data.userName,
+          address: data.address,
+          email: data.email,
+          phone: data.phone,
+          sex: data.sex,
+          password: hashPass,
+          groupId: 1,
+        };
+        let newUser = await db.user.create(newUserData);
+        return {
+          message: "success",
+          code: 1,
+          data: { user: newUser.dataValues },
+        };
       }
     } catch (e) {
       console.log("Error: ", e);
-      return false;
+      return {
+        message: "something went wrong! Please try again",
+        code: -1,
+        data: {},
+      };
     }
   },
 
-  async deleteUser(id) {
-    try {
-      await db.user.destroy({
-        where: {
-          id,
-        },
-      });
-    } catch (e) {
-      console.log("Error: ", e);
+  async read(reqUser) {
+    let userList = await db.user.findAll();
+    let { rows, count } = await db.user.findAndCountAll({
+      paranoid: false,
+      where: { deletedAt: { [Op.not]: null } },
+    });
+    return {
+      message: "success",
+      code: 1,
+      data: { userList, trash: { rows, count } },
+    };
+  },
+
+  async getById(id) {
+    let user = await db.user.findOne({ where: { id }, raw: true });
+    if (user) {
+      return {
+        message: "Success",
+        code: 1,
+        data: user,
+      };
+    } else {
+      return {
+        message: "user are not found",
+        code: -1,
+        data: user,
+      };
     }
   },
 
-  async destroyUser(id) {
+  async getProfile(id) {
+    let user = await db.user.findOne({
+      where: { id },
+      attributes: [
+        "id",
+        "userName",
+        "email",
+        "phone",
+        "address",
+        "sex",
+        "dob",
+        "imgId",
+        "groupId",
+      ],
+      raw: true,
+    });
+    if (user) {
+      return {
+        message: "Success",
+        code: 1,
+        data: user,
+      };
+    } else {
+      return {
+        message: "user are not found",
+        code: -1,
+        data: user,
+      };
+    }
+  },
+
+  async update(id, data) {
+    let user = await db.user.update(data, { where: { id } });
+
+    if (user[0]) {
+      return {
+        message: "Success",
+        code: 1,
+        data: {},
+      };
+    } else {
+      return {
+        message: "update failed",
+        code: -1,
+        data: {},
+      };
+    }
+  },
+
+  async delete(id) {
+    let user = await db.user.destroy({ where: { id } });
+
+    if (user) {
+      return {
+        message: "Success",
+        code: 1,
+        data: {},
+      };
+    } else {
+      return {
+        message: "delete failed",
+        code: -1,
+        data: {},
+      };
+    }
+  },
+
+  async destroy(id) {
     try {
-      await db.user.destroy({
+      let user = await db.user.destroy({
         where: {
           id,
         },
         force: true,
       });
+      if (user) {
+        return {
+          message: "Success",
+          code: 1,
+          data: { user },
+        };
+      } else {
+        return {
+          message: "delete failed",
+          code: -1,
+          data: {},
+        };
+      }
     } catch (e) {
       console.log("Error: ", e);
+      return {
+        message: "some thing went wrong! please try again",
+        code: -1,
+        data: {},
+      };
+    }
+  },
+
+  async trash() {
+    try {
+      const { count, rows } = await db.user.findAndCountAll({
+        paranoid: false,
+        where: { deletedAt: { [Op.not]: null } },
+      });
+      return {
+        message: "success",
+        code: 1,
+        data: { count, rows },
+      };
+    } catch (e) {
+      console.log("Error: ", e);
+      return {
+        message: "something went wrong, please try again",
+        code: -1,
+        data: { count, rows },
+      };
     }
   },
 
@@ -68,33 +205,26 @@ module.exports = {
     try {
       let user = await db.user.findByPk(id, { paranoid: false });
       if (user) {
-        await user.restore();
+        let result = await user.restore();
+        return {
+          message: "success",
+          code: 1,
+          data: { user: result.dataValues },
+        };
+      } else {
+        return {
+          message: "can't find user!",
+          code: -1,
+          data: {},
+        };
       }
     } catch (e) {
       console.log("Error: ", e);
-    }
-  },
-
-  async getUserList() {
-    let users = [];
-    users = await db.user.findAll();
-    return users;
-  },
-
-  async getTrash() {
-    let { count, rows } = await db.user.findAndCountAll({
-      paranoid: false,
-      where: { deletedAt: { [Op.not]: null } },
-    });
-    return { count, rows };
-  },
-
-  async getUserById(id) {
-    try {
-      return await db.user.findOne({ where: { id } });
-    } catch (error) {
-      console.log(error);
-      return {};
+      return {
+        message: "something went wrong, please try again",
+        code: -1,
+        data: {},
+      };
     }
   },
 
@@ -116,18 +246,39 @@ module.exports = {
     }
   },
 
-  async updateUser(address, name, email, id) {
+  async getUserPost() {
     try {
-      await db.user.update(
-        { userName: name, email, address },
-        {
-          where: {
-            id,
-          },
-        }
-      );
-    } catch (e) {
-      console.log(e);
+      let { count, rows } = await db.user.findAndCountAll({
+        offset: page * limit,
+        limit: limit,
+      });
+      return {
+        userList: rows,
+        pages: Math.ceil(count / limit),
+        limit,
+        currentPage: page,
+      };
+    } catch (error) {
+      console.log(error);
+      return {};
+    }
+  },
+
+  async getUserPostTrash() {
+    try {
+      let { count, rows } = await db.user.findAndCountAll({
+        offset: page * limit,
+        limit: limit,
+      });
+      return {
+        userList: rows,
+        pages: Math.ceil(count / limit),
+        limit,
+        currentPage: page,
+      };
+    } catch (error) {
+      console.log(error);
+      return {};
     }
   },
 };

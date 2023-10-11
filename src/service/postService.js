@@ -15,18 +15,41 @@ module.exports = {
   async read() {
     let postList = await db.post.findAll();
 
-    let formattedList = postList.map((item) => {
-      item.startDate = formattedDate(item.startDate);
+    return { message: "success", code: 1, data: postList };
+  },
 
-      return item;
+  async getUserPost(id) {
+    let postList = await db.post.findAll({ where: { userId: id } });
+
+    if (postList[0]) {
+      return { message: "success", code: 1, data: postList };
+    }
+    return {
+      message: "This user don't have any post!",
+      code: 1,
+      data: postList,
+    };
+  },
+
+  async getUserPostTrash(id) {
+    const { count, rows } = await db.post.findAndCountAll({
+      paranoid: false,
+      where: { deletedAt: { [Op.not]: null }, userId: id },
     });
 
-    return formattedList;
+    if (count) {
+      return { message: "success", code: 1, data: { count, rows } };
+    }
+    return {
+      message: "Nothing here!",
+      code: 1,
+      data: {},
+    };
   },
 
   async getById(id) {
     let post = await db.post.findOne({ where: { id }, raw: true });
-    // post.startDate = formattedDate(post.startDate);
+
     return {
       message: "Success",
       code: 1,
@@ -36,7 +59,8 @@ module.exports = {
 
   async create(rawData) {
     let post = await db.post.create(rawData);
-    return post;
+
+    return { message: "A Post created", code: 1, data: post.dataValues };
   },
 
   async update(id, data) {
@@ -59,8 +83,22 @@ module.exports = {
 
   async delete(id) {
     let post = await db.post.destroy({ where: { id } });
-    return post;
+
+    if (post) {
+      return {
+        message: "Success",
+        code: 1,
+        data: {},
+      };
+    } else {
+      return {
+        message: "delete failed",
+        code: -1,
+        data: {},
+      };
+    }
   },
+
   async destroy(id) {
     try {
       let post = await db.post.destroy({
@@ -69,33 +107,76 @@ module.exports = {
         },
         force: true,
       });
-      return post;
+      if (post) {
+        return {
+          message: "Success",
+          code: 1,
+          data: { post },
+        };
+      } else {
+        return {
+          message: "delete failed",
+          code: -1,
+          data: {},
+        };
+      }
     } catch (e) {
       console.log("Error: ", e);
-      return;
+      return {
+        message: "some thing went wrong! please try again",
+        code: -1,
+        data: {},
+      };
     }
   },
+
   async trash() {
     try {
       const { count, rows } = await db.post.findAndCountAll({
         paranoid: false,
         where: { deletedAt: { [Op.not]: null } },
       });
-      return { count, rows };
+      if (count) {
+        return {
+          message: "success",
+          code: 1,
+          data: { count, rows },
+        };
+      } else {
+        return {
+          message: "nothing here!",
+          code: 1,
+          data: {},
+        };
+      }
     } catch (e) {
       console.log("Error: ", e);
-      return;
+      return {
+        message: "something went wrong, please try again",
+        code: -1,
+        data: { count, rows },
+      };
     }
   },
+
   async restore(id) {
     try {
       let post = await db.post.findByPk(id, { paranoid: false });
       if (post) {
-        await post.restore();
-        return post;
+        let result = await post.restore();
+        return {
+          message: "success",
+          code: 1,
+          data: { post: result.dataValues },
+        };
       }
     } catch (e) {
       console.log("Error: ", e);
+      return {
+        message: "something went wrong, please try again",
+        code: -1,
+        data: {},
+      };
     }
   },
 };

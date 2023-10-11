@@ -2,27 +2,30 @@ import postService from "../service/postService";
 
 module.exports = {
   async handleShow(req, res) {
-    let postList = await postService.read();
+    let result = await postService.read();
     let trash = await postService.trash();
-    if (postList) {
-      res.render("post", { postList, path: "/post", trash });
-    } else {
-      res.send("No post found");
-    }
+
+    res.status(200).json({
+      message: result.message,
+      code: result.code,
+      data: { posts: result.data, trash },
+    });
   },
 
   async handleCreate(req, res) {
-    let post = await postService.create(req.body);
-    if (post) {
-      res.redirect("/post");
-    } else {
-      res.send("No post found");
-    }
+    let result = await postService.create(req.body);
+
+    res.status(200).json({
+      message: result.message,
+      code: result.code,
+      data: result.data,
+    });
   },
 
   create(req, res) {
     res.render("post/post");
   },
+
   async getById(req, res) {
     let id = req.params.id;
     let result = await postService.getById(id);
@@ -32,6 +35,7 @@ module.exports = {
       data: result.data,
     });
   },
+
   async handleUpdate(req, res) {
     let rawData = { ...req.body };
     let id = rawData.body?.id || req.params.id;
@@ -46,26 +50,67 @@ module.exports = {
   async handleDelete(req, res) {
     let id = req.params.id;
 
-    await postService.delete(id);
-    res.redirect("/post");
+    let result = await postService.delete(id);
+    res.status(200).json({
+      message: result.message,
+      code: result.code,
+      data: result.data,
+    });
   },
+
   async handleDestroy(req, res) {
     let id = req.params.id;
 
-    await postService.delete(id);
-    res.redirect("/post");
+    let result = await postService.destroy(id);
+
+    res.status(200).json({
+      message: result.message,
+      code: result.code,
+      data: result.data,
+    });
   },
+
   async getTrash(req, res) {
-    let trash = await postService.trash();
-    res.render("post/trash", { trash });
+    let result = await postService.trash();
+
+    res.status(200).json({
+      message: result.message,
+      code: result.code,
+      data: result.data,
+    });
   },
+
   async handleRestore(req, res) {
     let id = req.params.id;
-    let post = await postService.restore(id);
-    if (post) {
-      res.redirect("back");
-    } else {
-      res.send("false to restore!");
-    }
+    let result = await postService.restore(id);
+
+    res.status(200).json({
+      message: result.message,
+      code: result.code,
+      data: result.data,
+    });
+  },
+
+  async getUserPost(req, res) {
+    let id = req.params.id;
+    let result = await postService.getUserPost(id);
+
+    res.status(200).json({
+      message: result.message,
+      code: result.code,
+      data: result.data,
+    });
+  },
+
+  async getUserPostTrash(req, res) {
+    let id = req.params.id;
+
+    let result = await postService.getUserPostTrash(id);
+
+    res.status(200).json({
+      message: result.message,
+      code: result.code,
+      data: result.data,
+    });
   },
 };

@@ -8,7 +8,11 @@ const hashPassword = (userPassword) => {
   var hashPassword = bcrypt.hashSync(userPassword, salt);
   return hashPassword;
 };
-
+const renderRoles = (id) => {
+  const roles = [];
+  roles.map((id) => {});
+  return roles;
+};
 module.exports = {
   async handleRegister(rawData) {
     if (
@@ -74,7 +78,70 @@ module.exports = {
       };
     }
   },
+
   async handleLogin(userData) {
+    try {
+      if (!userData.key || !userData.password)
+        return {
+          message: "you must fill all the fields",
+          code: -1,
+          data: {},
+        };
+
+      let userKey = String(userData.key).trim();
+      let userPassword = String(userData.password).trim();
+
+      let user = await db.user.findOne({
+        where: {
+          [Op.or]: [{ email: userKey }, { phone: userKey }],
+        },
+        attributes: ["userName", "password", "id"],
+        include: [
+          {
+            model: db.group,
+            attributes: ["name"],
+          },
+        ],
+      });
+      if (user) {
+        let isCheckedPassword = await bcrypt.compare(
+          userPassword,
+          user.password
+        );
+        if (isCheckedPassword) {
+          //create a token
+          let payload = {
+            userName: user.userName,
+            group: user.group.name,
+            userID: user.id,
+          };
+          let secretKey = process.env.SECRET_KEY;
+
+          let jwtToken = jwt.sign(payload, secretKey, {
+            expiresIn: 1000 * 60 * 60,
+          });
+
+          return {
+            message: "login successful",
+            code: 1,
+            data: {
+              payload,
+              jwtToken,
+            },
+          };
+        }
+      }
+      return {
+        message: "Phone/ email or password is incorrect!",
+        code: -1,
+        data: {},
+      };
+    } catch (error) {
+      console.log(">>check error", error);
+    }
+  },
+
+  async handleLogout(userData) {
     try {
       if (!userData.key || !userData.password)
         return {
@@ -110,6 +177,7 @@ module.exports = {
           let payload = {
             userName: user.userName,
             group: user.group.name,
+            userID: user.id,
           };
           let secretKey = process.env.SECRET_KEY;
 

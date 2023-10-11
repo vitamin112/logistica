@@ -2,11 +2,12 @@ import { verify } from "jsonwebtoken";
 import db from "../models";
 const { Op } = require("sequelize");
 
-const ignoreRole = ["/", "/api/v1/login", "/api/v1/register"];
+const ignoreRole = ["/login", "/register"];
 
 module.exports = {
   async checkToken(req, res, next) {
     const path = req.path;
+
     if (ignoreRole.includes(path)) {
       next();
     } else {
@@ -19,52 +20,99 @@ module.exports = {
         try {
           let decoded = verify(token, process.env.SECRET_KEY);
 
-          let dateNow = new Date();
+          const user = await db.user.findOne({ where: { id: decoded.userID } });
+          if (user) {
+            let dateNow = new Date();
 
-          if (decoded.exp < dateNow.getTime() / 1000) {
-            console.log("Token expired");
-            res.redirect("/api/v1/login");
+            if (decoded.exp < dateNow.getTime() / 1000) {
+              res.json({
+                message: "Token is expired!",
+                code: -1,
+                data: {},
+              });
+            } else {
+              req.user = decoded;
+              next();
+            }
           } else {
-            req.user = decoded;
-            next();
+            res.json({
+              message: "Token is invalid!",
+              code: -1,
+              data: {},
+            });
           }
         } catch (error) {
           console.log("Verify token error: ", error);
-          res.json("Invalid token!");
+          res.json({
+            message: "Token is invalid!",
+            code: -1,
+            data: {},
+          });
         }
       } else {
-        res.redirect("/api/v1/login");
+        res.json({
+          message: "Token is not found",
+          code: -1,
+          data: {},
+        });
       }
     }
   },
 
-  async isAuth(req, res, next) {
+  async userPermissions(req, res, next) {
     const path = req.path;
+    const url = req.path;
+
+    console.log("url: ", url);
+    console.log("path: ", path);
 
     if (ignoreRole.includes(path)) {
       next();
     } else {
       if (req.user) {
-        try {
-          //get role from db
-          let userData = await db.group.findOne({
-            where: { name: req.user.group },
-            attributes: [["name", "group"]],
-          });
+        if (req.user.group === "admin") {
+          next();
+        } else {
+          console.log(req.user.userID);
 
-          if (
-            userData &&
-            req.user &&
-            userRoles.includes(path) &&
-            req.user.roles.includes(path)
-          ) {
+          if (req.params.id == req.user.userID) {
             next();
           } else {
-            res.json("401 Unauthorized Error");
+            res.json({
+              message: "Access denied!",
+              code: -1,
+              data: {},
+            });
           }
-        } catch (error) {
-          console.log("Verify token error: ", error);
-          res.json("Invalid token!");
+        }
+      }
+    }
+  },
+  async postPermissions(req, res, next) {
+    const path = req.path;
+    const url = req.path;
+
+    console.log("url: ", url);
+    console.log("path: ", path);
+
+    if (ignoreRole.includes(path)) {
+      next();
+    } else {
+      if (req.user) {
+        if (req.user.group === "admin") {
+          next();
+        } else {
+          console.log(req.user.userID);
+
+          if (req.params.id == req.user.userID) {
+            next();
+          } else {
+            res.json({
+              message: "Access denied!",
+              code: -1,
+              data: {},
+            });
+          }
         }
       }
     }

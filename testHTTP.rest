@@ -1,31 +1,155 @@
-
-POST  http://localhost:8080/api/v1/login
-content-type: application/json
-
-{
-    "key": "ngloc2k2@gmail.com",
-    "password": "321"
-}
-
 ###
-GET http://localhost:8080/user/create-user
-content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
-
-{
-    "userName": "new@gmail.com",
-    "password": "123"
-}
-
-###
-POST http://localhost:8080/user/create
+POST http://localhost:8080/api/v1/register
 content-type: application/json
 
 {
     "userName":" data.userName",
     "address": "data",
-    "email":"new@gmail.com",
-    "phone": "data",
+    "email":"user2k2@gmail.com",
+    "phone": "1234sss5",
     "sex": "data",
-    "password": "123",
+    "password": "123"
 }
+###
+
+POST  http://localhost:8080/api/v1/login
+content-type: application/json
+
+{
+    "key": "new@gmail.com",
+    "password": "123"
+}
+
+###
+
+POST http://localhost:8080/api/v1/post/create
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+{
+    "title": "new@gmail.com",
+    "slug": "123",
+    "content": "Nhạc Thi Song ngồi ở trước máy tính, đem tạp ở máy rà quét giấy thật cẩn thận rút ra. Một tờ che lại con dấu hợp đồng, bị vòng lăn ngược đến nhăn thành một đống.    Nàng thở dài, dùng một quyển thật dày thư đè cho bằng nó, tiện đà xoa xoa giữa mày: Bí thư công tác quá vất vả, liền vì này vô cùng đơn giản 2 cái tích phân, nàng đã cùng này đài phá máy rà quét rối rắm nửa giờ.Vạn ác đứng đầu, chính là cái kia từ nàng xuyên qua tới nay, liền cấy vào nàng đại não Bá tổng phúc lợi hệ thống Xuyên qua trước kia, Nhạc Thi Song là giới giải trí một đường lưu lượng tiểu hoa. Diện mạo kinh diễm, công tác nỗ lực, chính quy xuất thân, bối cảnh trong sạch, hơn nữa như vậy một chút vận khí tốt, làm nàng ở xuất đạo ngắn ngủn hai năm nội liền hồng biến đại giang nam bắc.", 
+    "userId": "1",
+    "view": "123",
+    "imageId":"2",
+    "status":"Accept"
+}
+
+###
+
+GET http://localhost:8080/api/v1/post/
+content-type: application/json
+
+###
+
+PUT  http://localhost:8080/api/v1/post/update/10
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+{
+    "slug": "hello world"
+}
+
+###
+
+DELETE http://localhost:8080/api/v1/post/delete/10
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+###
+
+GET http://localhost:8080/api/v1/post/trash
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+###
+
+POST http://localhost:8080/api/v1/post/restore/10
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+###
+
+DELETE http://localhost:8080/api/v1/post/destroy/10
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+###
+
+
+##################################
+###-----USER TEST REST API----####
+##################################
+
+POST http://localhost:8080/api/v1/user/create
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+{
+    "password":"Accept"
+}
+
+###
+
+GET http://localhost:8080/api/v1/user/
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+###
+
+GET http://localhost:8080/api/v1/user/7
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+###
+
+PUT  http://localhost:8080/api/v1/user/update/7
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+{
+    "address": "hello world"
+}
+
+###
+
+DELETE http://localhost:8080/api/v1/user/delete/7
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+###
+
+GET http://localhost:8080/api/v1/user/trash
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+###
+
+POST http://localhost:8080/api/v1/user/restore/76
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+###
+
+DELETE http://localhost:8080/api/v1/user/destroy/1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhlbGxvIiwiZ3JvdXAiOiJkZXYiLCJyb2xlcyI6WyIvcHJvamVjdCIsIi91c2VyIl0sImlhdCI6MTY5NjY5NTkwMiwiZXhwIjoxNjk3NTk1OTAyfQ.Bs06I2CEUdZ1fFrJ-CbXghz_k-aFeE6did1YtnkLjeY
+
+###
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
