@@ -56,7 +56,7 @@ module.exports = {
 
   async handleDelete(req, res) {
     const id = req.params.id;
-    if (checkAdminPermission(req.user) || req.userID !== id) {
+    if (checkAdminPermission(req.user) && req.userID !== id) {
       let result = await userService.delete(id);
 
       res.status(200).json({
@@ -76,7 +76,7 @@ module.exports = {
   async handleDestroy(req, res) {
     let id = req.params.id;
 
-    if (checkAdminPermission(req.user) || req.userID !== id) {
+    if (checkAdminPermission(req.user) && req.userID !== id) {
       let result = await userService.destroy(id);
       res.status(200).json({
         message: result.message,
