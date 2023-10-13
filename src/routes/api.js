@@ -1,5 +1,6 @@
 import express from "express";
 import apiLoginController from "../controller/apiLoginController";
+import commentController from "../controller/commentController";
 import postController from "../controller/postController";
 import useController from "../controller/userController";
 import authMiddleware from "../middleWare/authMiddleWare";
@@ -16,26 +17,32 @@ const initApiRouter = (app) => {
   //check authentication
   router.all("*", authMiddleware.checkToken);
 
-  router.put("/user/update/:id", useController.handleUpdate);
-  router.post("/user/restore/:id", useController.handleRestore);
-  router.delete("/user/delete/:id", useController.handleDelete);
-  router.delete("/user/destroy/:id", useController.handleDestroy);
-  router.get("/user/trash", useController.getTrash);
-  router.post("/user/create", useController.handleCreate);
-  router.get("/user/profile/:id", useController.getProfile);
-  router.get("/user/:id/trash", postController.getUserPostTrash);
-  router.get("/user/:id/post", postController.getUserPost);
-  router.get("/user/:id", useController.getById);
-  router.get("/user", useController.handleShow);
+  router
+    .delete("/user/destroy/:id", useController.handleDestroy)
+    .delete("/user/delete/:id", useController.handleDelete)
+    .put("/user/update/:id", useController.handleUpdate)
+    .post("/user/restore/:id", useController.handleRestore)
+    .get("/user/trash", useController.getTrash)
+    .post("/user/create", useController.handleCreate)
+    .get("/user/profile/:id", useController.getProfile)
+    .get("/user/:id/trash", postController.getUserPostTrash)
+    .get("/user/:id/post", postController.getUserPost)
+    .get("/user/:id", useController.getById)
+    .get("/user", useController.handleShow);
 
-  router.post("/post/create", postController.handleCreate);
-  router.put("/post/update/:id", postController.handleUpdate);
-  router.delete("/post/delete/:id", postController.handleDelete);
-  router.delete("/post/destroy/:id", postController.handleDestroy);
-  router.post("/post/restore/:id", postController.handleRestore);
-  router.get("/post/trash", postController.getTrash);
-  router.get("/post/:id", postController.getById);
-  router.get("/post", postController.handleShow);
+  router
+    .delete("/post/delete/:id", postController.handleDelete)
+    .delete("/post/destroy/:id", postController.handleDestroy)
+    .post("/post/create", postController.handleCreate)
+    .put("/post/update/:id", postController.handleUpdate)
+    .post("/post/restore/:id", postController.handleRestore)
+    .get("/post/trash", postController.getTrash)
+    .delete("/post/:postId/comment/:cmtId", commentController.handleDestroy)
+    .put("/post/:postId/comment/:cmtId", commentController.handleUpdate)
+    .post("/post/:id/comment", commentController.handleCreate)
+    .get("/post/:id/comment", commentController.handleShow)
+    .get("/post/:id", postController.getById)
+    .get("/post", postController.handleShow);
 
   return app.use("/api/v1", router);
 };

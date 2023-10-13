@@ -5,8 +5,8 @@ content-type: application/json
 {
     "userName":" data.userName",
     "address": "data",
-    "email":"user2k2@gmail.com",
-    "phone": "1234sss5",
+    "email":"user2@gmail.com",
+    "phone": "1233123d",
     "sex": "data",
     "password": "123"
 }

@@ -51,18 +51,19 @@ const handleLogin = async (req, res) => {
 
     if (result.code == 1) {
       let options = {
-        maxAge: 1000 * 60 * 30,
+        maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,
       };
 
-      res.cookie("token", result.data?.jwtToken, options);
-      return res.status(200).json({
+      res.cookie("access_token", result.data?.token, options);
+
+      res.status(200).json({
         message: result.message,
         code: result.code,
         data: result.data,
       });
     } else {
-      return res.status(200).json({
+      res.status(200).json({
         message: result.message,
         code: result.code,
         data: {},
@@ -78,7 +79,7 @@ const handleLogin = async (req, res) => {
   }
 };
 const login = (req, res) => {
-  res.render("pages/login/login");
+  res.render("pages/login");
 };
 const register = (req, res) => {
   res.render("pages/register");

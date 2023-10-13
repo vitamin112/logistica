@@ -1,4 +1,4 @@
-<%- include('../../includes/head.ejs') %>
+<%- include('../includes/head.ejs') %>
 
 <style>
   .divider:after,
@@ -23,7 +23,7 @@
             />
           </div>
           <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
-            <form action="/api/v1/login" method="post">
+            <form action="/api/v1/login" method="POST" >
               <div class="form-outline mb-4">
                 <input
                   type="email"
@@ -70,7 +70,10 @@
                 <button type="submit" class="btn btn-primary btn-lg btn-block">
                   Sign in
                 </button>
-                
+                <a href="/register" class="btn btn-success btn-lg my-2 btn-block">
+                  Register
+                </a>
+              
                 <div class="divider d-flex align-items-center my-4">
                   <p class="text-center fw-bold mx-auto mb-0 text-muted">OR</p>
                 </div>
@@ -93,5 +96,21 @@
         </div>
       </div>
     </section>
+  <script>
+    async function test(){
+      const response = await fetch("http://localhost:8080/login", {
+        method: "PUT", 
+        mode: "cors", 
+        cache: "no-cache", 
+        credentials: "same-origin", 
+        headers: {
+          "Content-Type": "application/json",  
+        },
+        redirect: "follow", 
+        referrerPolicy: "no-referrer", 
+      });
+  return response.json();
+}
+  </script>
   </body>
 </html>

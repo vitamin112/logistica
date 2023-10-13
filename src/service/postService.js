@@ -19,10 +19,12 @@ module.exports = {
   },
 
   async getUserPost(id) {
-    let postList = await db.post.findAll({ where: { userId: id } });
+    let { count, rows } = await db.post.findAndCountAll({
+      where: { userId: id },
+    });
 
-    if (postList[0]) {
-      return { message: "success", code: 1, data: postList };
+    if (count) {
+      return { message: "success", code: 1, data: { count, rows } };
     }
     return {
       message: "This user don't have any post!",
@@ -49,15 +51,60 @@ module.exports = {
 
   async getById(id) {
     let post = await db.post.findOne({ where: { id }, raw: true });
-
-    return {
-      message: "Success",
-      code: 1,
-      data: post,
-    };
+    if (post) {
+      return {
+        message: "Success",
+        code: 1,
+        data: post,
+      };
+    } else {
+      return {
+        message: "can't find post",
+        code: -1,
+        data: {},
+      };
+    }
   },
 
-  async create(rawData) {
+  async getComment(id) {
+    const { count, rows } = await db.comment.findAndCountAll({
+      where: { postId: id },
+      raw: true,
+    });
+    if (count) {
+      return {
+        message: "Success",
+        code: 1,
+        data: { count, rows },
+      };
+    } else {
+      return {
+        message: "can't find any comment here!",
+        code: -1,
+        data: {},
+      };
+    }
+  },
+
+  async getDeleted(id) {
+    let post = await db.post.findByPk(id, { paranoid: false });
+    if (post) {
+      return {
+        message: "Success",
+        code: 1,
+        data: post,
+      };
+    } else {
+      return {
+        message: "can't find post",
+        code: -1,
+        data: {},
+      };
+    }
+  },
+
+  async create(rawData, author) {
+    rawData.userId = author;
     let post = await db.post.create(rawData);
 
     return { message: "A Post created", code: 1, data: post.dataValues };
@@ -162,12 +209,13 @@ module.exports = {
   async restore(id) {
     try {
       let post = await db.post.findByPk(id, { paranoid: false });
+
       if (post) {
         let result = await post.restore();
         return {
           message: "success",
           code: 1,
-          data: { post: result.dataValues },
+          data: { ...result.dataValues },
         };
       }
     } catch (e) {

@@ -14,7 +14,7 @@ module.exports = {
       const token =
         req.header("Authorization")?.replace("Bearer ", "") ||
         req.query.token ||
-        req.cookies["token"];
+        req.cookies["access_token"];
 
       if (token) {
         try {

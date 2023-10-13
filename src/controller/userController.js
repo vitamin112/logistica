@@ -12,6 +12,22 @@ const checkAdminPermission = (user) => {
   }
   return false;
 };
+const handleRes = function (res, isCheck, fn) {
+  if (isCheck) {
+    let result = fn;
+    res.status(200).json({
+      message: result.message,
+      code: result.code,
+      data: result.data,
+    });
+  } else {
+    res.status(200).json({
+      message: "you don't have permission!",
+      code: -1,
+      data: {},
+    });
+  }
+};
 
 module.exports = {
   async handleCreate(req, res) {
@@ -24,39 +40,23 @@ module.exports = {
         code: result.code,
         data: result.data,
       });
-    } else {
-      res.status(200).json({
-        message: result.message,
-        code: result.code,
-        data: result.data,
-      });
     }
   },
 
   async handleUpdate(req, res) {
     let id = req.params.id;
+    let rawData = { ...req.body };
 
-    if (checkUserPermission(req.user, id)) {
-      let rawData = { ...req.body };
-
-      let result = await userService.update(id, rawData);
-      res.status(200).json({
-        message: result.message,
-        code: result.code,
-        data: result.data,
-      });
-    } else {
-      res.status(200).json({
-        message: "you don't have permission!",
-        code: -1,
-        data: {},
-      });
-    }
+    handleRes(
+      res,
+      checkUserPermission(req.user, id),
+      await userService.update(id, rawData)
+    );
   },
 
   async handleDelete(req, res) {
     const id = req.params.id;
-    if (checkAdminPermission(req.user) && req.userID !== id) {
+    if (checkAdminPermission(req.user) && req.user.userID !== id) {
       let result = await userService.delete(id);
 
       res.status(200).json({
@@ -66,7 +66,7 @@ module.exports = {
       });
     } else {
       res.status(200).json({
-        message: "you can't delete yourself",
+        message: "delete failed!",
         code: -1,
         data: {},
       });
@@ -76,7 +76,7 @@ module.exports = {
   async handleDestroy(req, res) {
     let id = req.params.id;
 
-    if (checkAdminPermission(req.user) && req.userID !== id) {
+    if (checkAdminPermission(req.user) && req.user.userID !== id) {
       let result = await userService.destroy(id);
       res.status(200).json({
         message: result.message,
@@ -85,7 +85,7 @@ module.exports = {
       });
     } else {
       res.status(200).json({
-        message: "you can't delete yourself",
+        message: "delete failed!",
         code: -1,
         data: {},
       });
@@ -95,20 +95,11 @@ module.exports = {
   async handleRestore(req, res) {
     let id = req.params.id;
 
-    if (checkAdminPermission(req.user)) {
-      let result = await userService.restore(id);
-      res.status(200).json({
-        message: result.message,
-        code: result.code,
-        data: result.data,
-      });
-    } else {
-      res.status(200).json({
-        message: "you don't have permission!",
-        code: -1,
-        data: {},
-      });
-    }
+    handleRes(
+      res,
+      checkAdminPermission(req.user),
+      await userService.restore(id)
+    );
   },
 
   async getProfile(req, res) {
@@ -126,20 +117,11 @@ module.exports = {
   async getById(req, res) {
     const id = req.params.id;
 
-    if (checkUserPermission(req.user, id)) {
-      let result = await userService.getById(id);
-      res.status(200).json({
-        message: result.message,
-        code: result.code,
-        data: result.data,
-      });
-    } else {
-      res.status(200).json({
-        message: "you don't have permission!",
-        code: -1,
-        data: {},
-      });
-    }
+    handleRes(
+      res,
+      checkUserPermission(req.user, id),
+      await userService.getById(id)
+    );
   },
 
   async handleShow(req, res) {
@@ -178,20 +160,7 @@ module.exports = {
   },
 
   async getTrash(req, res) {
-    if (checkAdminPermission(req.user)) {
-      let result = await userService.trash();
-      res.status(200).json({
-        message: result.message,
-        code: result.code,
-        data: result.data,
-      });
-    } else {
-      res.status(200).json({
-        message: "user don't have permission ",
-        code: -1,
-        data: {},
-      });
-    }
+    handleRes(res, checkAdminPermission(req.user), await userService.trash());
   },
 
   async createNewUser(req, res) {

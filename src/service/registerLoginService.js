@@ -64,7 +64,7 @@ module.exports = {
         sex: rawData.sex,
         address: rawData.address.trim(),
         password: hashPass,
-        groupId: 1,
+        groupId: 2,
       });
       return {
         Message: "Your has been registered",
@@ -103,6 +103,7 @@ module.exports = {
           },
         ],
       });
+
       if (user) {
         let isCheckedPassword = await bcrypt.compare(
           userPassword,
@@ -117,7 +118,7 @@ module.exports = {
           };
           let secretKey = process.env.SECRET_KEY;
 
-          let jwtToken = jwt.sign(payload, secretKey, {
+          let token = jwt.sign(payload, secretKey, {
             expiresIn: 1000 * 60 * 60,
           });
 
@@ -126,7 +127,7 @@ module.exports = {
             code: 1,
             data: {
               payload,
-              jwtToken,
+              token,
             },
           };
         }
@@ -181,7 +182,7 @@ module.exports = {
           };
           let secretKey = process.env.SECRET_KEY;
 
-          let jwtToken = jwt.sign(payload, secretKey, {
+          let token = jwt.sign(payload, secretKey, {
             expiresIn: 1000 * 60 * 60,
           });
 
@@ -190,7 +191,7 @@ module.exports = {
             code: 1,
             data: {
               payload,
-              jwtToken,
+              token,
             },
           };
         }
