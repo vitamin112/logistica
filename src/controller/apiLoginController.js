@@ -78,6 +78,25 @@ const handleLogin = async (req, res) => {
     });
   }
 };
+const handleLogout = async (req, res) => {
+  try {
+    res.clearCookie("access_token");
+
+    return {
+      message: "You are logged out",
+      code: 1,
+      data: {},
+    };
+  } catch (error) {
+    console.log(">>check error", error);
+    return {
+      message: "something went wrong! Please try again",
+      code: 500,
+      data: {},
+    };
+  }
+};
+
 const login = (req, res) => {
   res.render("pages/login");
 };
@@ -87,6 +106,7 @@ const register = (req, res) => {
 module.exports = {
   handleLogin,
   handleRegister,
+  handleLogout,
   register,
   login,
 };

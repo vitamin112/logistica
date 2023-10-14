@@ -11,6 +11,7 @@ const initApiRouter = (app) => {
   // api for register login routes
   router.post("/register", apiLoginController.handleRegister);
   router.post("/login", apiLoginController.handleLogin);
+  router.post("/logout", apiLoginController.handleLogout);
   router.get("/register", apiLoginController.register);
   router.get("/login", apiLoginController.login);
 
