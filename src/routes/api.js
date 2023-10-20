@@ -9,6 +9,8 @@ const router = express.Router();
 
 const initApiRouter = (app) => {
   // api for register login routes
+  router.post("/reset-password", useController.resetPassword);
+  router.post("/generate-reset-code", useController.generateResetCode);
   router.post("/register", apiLoginController.handleRegister);
   router.post("/login", apiLoginController.handleLogin);
   router.post("/logout", apiLoginController.handleLogout);
@@ -21,6 +23,7 @@ const initApiRouter = (app) => {
   router
     .delete("/user/destroy/:id", useController.handleDestroy)
     .delete("/user/delete/:id", useController.handleDelete)
+    .put("/user/:id/password", useController.changePassword)
     .put("/user/update/:id", useController.handleUpdate)
     .post("/user/restore/:id", useController.handleRestore)
     .get("/user/trash", useController.getTrash)

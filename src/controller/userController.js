@@ -166,4 +166,48 @@ module.exports = {
   async createNewUser(req, res) {
     res.render("user/user", { message: "" });
   },
+
+  async resetPassword(req, res) {
+    const key = req.body.key;
+    const code = req.body.code;
+    const newPassword = req.body.password;
+
+    let result = await userService.resetPassword(key, code, newPassword);
+
+    res.status(200).json({
+      message: result.message,
+      code: result.code,
+      data: result.data,
+    });
+  },
+
+  async generateResetCode(req, res) {
+    const key = req.body.key;
+
+    let result = await userService.generateResetCode(key);
+
+    if (result.code == 1) {
+      res.status(200).json({
+        message: result.message,
+        code: result.code,
+        data: result.data,
+      });
+    } else {
+      res.status(404).json({
+        message: "Please check your phone number or email address",
+        code: -1,
+        data: {},
+      });
+    }
+  },
+
+  async changePassword(req, res) {
+    const id = req.params.id;
+    let newPass = req.body.password;
+    handleRes(
+      res,
+      checkUserPermission(req.user, id),
+      await userService.changePassword(id, newPass)
+    );
+  },
 };
