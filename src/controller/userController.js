@@ -172,6 +172,14 @@ module.exports = {
     const code = req.body.code;
     const newPassword = req.body.password;
 
+    if (!key || !code || !newPassword) {
+      return res.json({
+        message: "You must to fill all fields!",
+        code: -1,
+        data: {},
+      });
+    }
+
     let result = await userService.resetPassword(key, code, newPassword);
 
     res.status(200).json({
@@ -184,6 +192,14 @@ module.exports = {
   async generateResetCode(req, res) {
     const key = req.body.key;
 
+    if (!key) {
+      return res.json({
+        message: "You must to fill all fields!",
+        code: -1,
+        data: {},
+      });
+    }
+
     let result = await userService.generateResetCode(key);
 
     if (result.code == 1) {
@@ -193,7 +209,7 @@ module.exports = {
         data: result.data,
       });
     } else {
-      res.status(404).json({
+      res.status(200).json({
         message: "Please check your phone number or email address",
         code: -1,
         data: {},

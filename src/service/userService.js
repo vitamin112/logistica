@@ -27,9 +27,10 @@ const sendResetEmail = async (code) => {
   var mailOptions = {
     from: "xuboom54321@gmail.com",
     to: "xuboom12345@gmail.com",
-    subject: "Sending Email using Node.js",
-    text: "That was easy!",
-    html: "<h2>This is your reset password code: </h2>  <h3>" + code + "</h3>",
+    subject: "Verify code",
+    text: "This is secret code to reset your password",
+    html:
+      "<h2>Please don't share it with every one: </h2>  <h3>" + code + "</h3>",
   };
 
   await transporter.sendMail(mailOptions, function (error, info) {
