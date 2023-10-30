@@ -50,12 +50,27 @@ module.exports = {
   },
 
   async getById(id) {
-    let post = await db.post.findOne({ where: { id }, raw: true });
+    let post = await db.post.findOne({
+      where: { id },
+      include: [
+        {
+          model: db.user,
+          attributes: ["userName", "id"],
+        },
+        {
+          model: db.comment,
+          include: {
+            model: db.user,
+            attributes: ["userName", "id"],
+          },
+        },
+      ],
+    });
     if (post) {
       return {
         message: "Success",
         code: 1,
-        data: post,
+        data: { post },
       };
     } else {
       return {
