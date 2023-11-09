@@ -35,6 +35,7 @@ const initApiRouter = (app) => {
     .get("/user", useController.handleShow);
 
   router
+    .get("/post/search", postController.handleSearch)
     .delete("/post/delete/:id", postController.handleDelete)
     .delete("/post/destroy/:id", postController.handleDestroy)
     .post("/post/create", postController.handleCreate)

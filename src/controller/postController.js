@@ -78,6 +78,7 @@ module.exports = {
   async handleUpdate(req, res) {
     let rawData = { ...req.body };
     let id = req.params.id;
+
     let post = await postService.getById(id);
 
     if (post.code === 1) {
@@ -116,21 +117,12 @@ module.exports = {
 
   async handleDestroy(req, res) {
     let id = req.params.id;
-    let post = await postService.getById(id);
 
-    if (post.code === 1) {
-      handleRes(
-        res,
-        checkUserPermission(req.user, post.data.userId),
-        await postService.destroy(id)
-      );
-    } else {
-      res.status(404).json({
-        message: "can't not find post",
-        code: -1,
-        data: {},
-      });
-    }
+    handleRes(
+      res,
+      checkAdminPermission(req.user),
+      await postService.destroy(id)
+    );
   },
 
   async getTrash(req, res) {
@@ -148,6 +140,26 @@ module.exports = {
         checkUserPermission(req.user, post.data.userId),
         await postService.restore(id)
       );
+    } else {
+      res.status(404).json({
+        message: "can't not find post",
+        code: -1,
+        data: {},
+      });
+    }
+  },
+
+  async handleSearch(req, res) {
+    let searchTerm = req.query.searchTerm;
+
+    let result = await postService.search(searchTerm);
+
+    if (result.code === 1) {
+      res.status(200).json({
+        message: "success",
+        code: 1,
+        data: { posts: result.data.posts },
+      });
     } else {
       res.status(404).json({
         message: "can't not find post",

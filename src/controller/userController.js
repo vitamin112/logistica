@@ -219,11 +219,13 @@ module.exports = {
 
   async changePassword(req, res) {
     const id = req.params.id;
-    let newPass = req.body.password;
+    let newPass = req.body.newPass;
+    let oldPass = req.body.oldPass;
+
     handleRes(
       res,
       checkUserPermission(req.user, id),
-      await userService.changePassword(id, newPass)
+      await userService.changePassword(id, newPass, oldPass)
     );
   },
 };

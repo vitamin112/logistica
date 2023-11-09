@@ -13,7 +13,14 @@ const formattedDate = function (date) {
 
 module.exports = {
   async read() {
-    let postList = await db.post.findAll();
+    let postList = await db.post.findAll({
+      include: [
+        {
+          model: db.user,
+          attributes: ["userName", "id"],
+        },
+      ],
+    });
 
     return { message: "success", code: 1, data: postList };
   },
@@ -120,9 +127,14 @@ module.exports = {
 
   async create(rawData, author) {
     rawData.userId = author;
+
     let post = await db.post.create(rawData);
 
-    return { message: "A Post created", code: 1, data: post.dataValues };
+    return {
+      message: "A Post created",
+      code: 1,
+      data: post._previousDataValues,
+    };
   },
 
   async update(id, data) {
@@ -231,6 +243,42 @@ module.exports = {
           message: "success",
           code: 1,
           data: { ...result.dataValues },
+        };
+      }
+    } catch (e) {
+      console.log("Error: ", e);
+      return {
+        message: "something went wrong, please try again",
+        code: -1,
+        data: {},
+      };
+    }
+  },
+
+  async search(searchTerm) {
+    try {
+      let posts = await db.post.findAll({
+        raw: true,
+        where: {
+          [Op.or]: [
+            {
+              title: {
+                [Op.like]: `%${searchTerm}%`,
+              },
+            },
+            {
+              content: {
+                [Op.like]: `%${searchTerm}%`,
+              },
+            },
+          ],
+        },
+      });
+      if (posts) {
+        return {
+          message: "success",
+          code: 1,
+          data: { posts },
         };
       }
     } catch (e) {

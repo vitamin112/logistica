@@ -2,9 +2,13 @@ import bcrypt from "bcryptjs";
 import NodeCache from "node-cache";
 import nodemailer from "nodemailer";
 import db from "../models";
-const { Op } = require("sequelize");
+const { Op, EmptyResultError } = require("sequelize");
+
+require("dotenv").config();
 
 const resetPasswordCache = new NodeCache();
+const APP_KEY = process.env.APP_KEY;
+const EMAIL = process.env.PORT;
 
 const hashPassword = (userPassword) => {
   var salt = bcrypt.genSaltSync(10);
@@ -12,25 +16,26 @@ const hashPassword = (userPassword) => {
   return hashPassword;
 };
 
-const sendResetEmail = async (code) => {
+const sendResetEmail = async (code, userMail) => {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
     auth: {
-      user: "xuboom54321@gmail.com",
-      pass: "dutc kqft jofr ddbs",
+      user: EMAIL,
+      pass: APP_KEY,
     },
   });
 
   var mailOptions = {
-    from: "xuboom54321@gmail.com",
-    to: "xuboom12345@gmail.com",
-    subject: "Verify code",
-    text: "This is secret code to reset your password",
+    from: EMAIL,
+    to: userMail,
+    subject: "Your verification code ",
     html:
-      "<h2>Please don't share it with every one: </h2>  <h3>" + code + "</h3>",
+      "<h2>Please don't share it with every one: </h2> This is secret code to reset your password  <h3>" +
+      code +
+      "</h3>",
   };
 
   await transporter.sendMail(mailOptions, function (error, info) {
@@ -163,8 +168,8 @@ module.exports = {
     }
   },
 
-  async update(id, data) {
-    let user = await db.user.update(data, { where: { id } });
+  async update(id, { rawData }) {
+    let user = await db.user.update(rawData, { where: { id } });
 
     if (user[0]) {
       return {
@@ -346,7 +351,7 @@ module.exports = {
 
         resetPasswordCache.set(user.email, code, 900);
 
-        sendResetEmail(code);
+        sendResetEmail(code, user.email);
 
         return {
           message:
@@ -417,7 +422,7 @@ module.exports = {
     }
   },
 
-  async changePassword(id, newPass) {
+  async changePassword(id, newPass, oldPass) {
     try {
       let user = await db.user.findOne({
         where: { id },
@@ -428,15 +433,24 @@ module.exports = {
       }
 
       if (user) {
-        user.password = hashPassword(newPass);
+        let isCheckedPassword = await bcrypt.compare(oldPass, user.password);
+        if (isCheckedPassword) {
+          user.password = hashPassword(newPass);
 
-        user.save();
+          user.save();
 
-        return {
-          message: "Password changed",
-          code: 1,
-          data: {},
-        };
+          return {
+            message: "Password changed",
+            code: 1,
+            data: {},
+          };
+        } else {
+          return {
+            message: "Password is incorrect",
+            code: -1,
+            data: {},
+          };
+        }
       } else {
         return {
           message: "User not found",

@@ -8,11 +8,7 @@ const hashPassword = (userPassword) => {
   var hashPassword = bcrypt.hashSync(userPassword, salt);
   return hashPassword;
 };
-const renderRoles = (id) => {
-  const roles = [];
-  roles.map((id) => {});
-  return roles;
-};
+
 module.exports = {
   async handleRegister(rawData) {
     if (
