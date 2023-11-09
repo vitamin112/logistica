@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 //config cors middleware
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
@@ -29,18 +29,6 @@ app.use(
     credentials: true,
   })
 );
-// app.use(function (req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
-//   res.header("Access-Control-Allow-Credentials", true);
-//   next();
-// });
-
-// app.use(methodOverride("_method"));
 
 //bodyParser
 app.use(bodyParser.json());
