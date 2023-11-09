@@ -14,7 +14,11 @@ const PORT = process.env.PORT || 3000;
 //config cors middleware
 app.use(
   cors({
-    origin: true,
+    origin: [
+      "http://localhost:3000",
+      "https://github.com/vitamin112/frontend",
+      "https://github.com/vitamin112",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
@@ -27,6 +31,7 @@ app.use(
       "Authorization",
     ],
     credentials: true,
+    exposedHeaders: ["set-cookie"],
   })
 );
 
