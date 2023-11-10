@@ -19,12 +19,12 @@ app.use(
       "https://github.com/vitamin112/frontend",
       "https://github.com/vitamin112",
     ],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
       "Origin",
       "X-Requested-With",
       "Accept",
+      "Cookie",
       "x-client-key",
       "x-client-token",
       "x-client-secret",

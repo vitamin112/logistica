@@ -1,16 +1,21 @@
 import { Sequelize } from "sequelize";
 
-const sequelize = new Sequelize("nodejs", "root", "12345678", {
-  host: "127.0.0.1",
-  dialect: "mysql",
-  charset: "utf8mb4",
-  collate: "utf8mb4_unicode_ci",
-  pool: {
-    max: 5,
-    min: 0,
-    idle: 10000,
-  },
-});
+const sequelize = new Sequelize(
+  "ejbqqdes_nodejs",
+  "ejbqqdes_nodejs",
+  "12345678",
+  {
+    host: "103.97.126.24",
+    dialect: "mysql",
+    charset: "utf8mb4",
+    collate: "utf8mb4_unicode_ci",
+    pool: {
+      max: 5,
+      min: 0,
+      idle: 10000,
+    },
+  }
+);
 // const sequelize = new Sequelize(
 //   "ejbqqdes_nodejs",
 //   "ejbqqdes_nodejs",
